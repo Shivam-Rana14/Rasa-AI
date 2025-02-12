@@ -1,0 +1,61 @@
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.8);
+  /* backdrop-filter: blur(10px); */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.logo h1 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-menu span {
+  color: white;
+  font-size: 0.9rem;
+}
+
+.login-button,
+.logout-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-button {
+  background: linear-gradient(to right, #4F46E5, #7C3AED);
+  color: white;
+  border: none;
+}
+
+.logout-button {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
