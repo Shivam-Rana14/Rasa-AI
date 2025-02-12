@@ -21,5 +21,5 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log(`MongoDB URI: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/'}`);
+    console.log('MongoDB Connection String:', process.env.MONGODB_URI);
 });

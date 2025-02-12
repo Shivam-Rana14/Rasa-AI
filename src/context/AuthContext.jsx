@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
+      const response = await fetch('http://localhost:5002/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost:5000/api/auth/signin', {
+      const response = await fetch('http://localhost:5002/api/auth/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
