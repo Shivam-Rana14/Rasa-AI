@@ -51,17 +51,14 @@ export const navigation = [
     id: "2",
     title: "How to use",
     url: "#how-to-use",
-    protected: true
+    protected: true,
   },
   {
     id: "3",
     title: "Pricing",
     url: "#pricing",
-    protected: true
+    protected: true,
   },
-  
-  
-  
 
   {
     id: "4",
@@ -136,14 +133,12 @@ export const roadmap = [
 export const collabText0 =
   "With our smart AI algorithm , it's the perfect solution for finding outfits tailored just for you.";
 
-  
 export const collabText1 =
-"Rasa AI model is equipped to serve all your fashion needs.";
-
+  "Rasa AI model is equipped to serve all your fashion needs.";
 
 export const collabText2 =
   "No matter what the ocassion, we are here to help you choose the best outfit..";
-  
+
 export const collabContent = [
   {
     id: "0",
@@ -159,7 +154,6 @@ export const collabContent = [
     id: "2",
     title: "Ask anything to fulfill your style needs",
     text: collabText2,
-    
   },
 ];
 
@@ -229,7 +223,7 @@ export const pricing = [
     description: "AI chatbot, personalized recommendations",
     price: "0",
     features: [
-      "An AI chatbot that can understand your queries",
+      "An AI that can understand your fashion needs.",
       "Personalized recommendations based on your preferences",
       "Ability to explore the app and its features without any cost",
     ],
@@ -374,5 +368,5 @@ export const howToUse = [
     backgroundUrl: "./src/assets/benefits/card-4.svg",
     iconUrl: plusSquare,
     light: true,
-  }
+  },
 ];
