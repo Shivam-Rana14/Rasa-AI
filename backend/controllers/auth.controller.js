@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
+const MONGODB_URI = process.env.MONGODB_URI;
 const DB_NAME = 'rasa_ai';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
