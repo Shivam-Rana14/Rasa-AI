@@ -51,13 +51,13 @@ export const navigation = [
     id: "2",
     title: "How to use",
     url: "#how-to-use",
-    protected: true,
+    
   },
   {
     id: "3",
     title: "Pricing",
     url: "#pricing",
-    protected: true,
+    
   },
 
   {
