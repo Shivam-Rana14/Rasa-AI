@@ -8,7 +8,7 @@ import Pricing from "./components/Pricing";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
+
 
 const App = () => {
   return (
@@ -24,10 +24,8 @@ const App = () => {
         <Hero />
         <Benefits />
         <Collaboration />
-        <ProtectedRoute>
           <HowToUse />
           <Pricing />
-        </ProtectedRoute>
       </div>
       <ButtonGradient />
     </AuthProvider>
