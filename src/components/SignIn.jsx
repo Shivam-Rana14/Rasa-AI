@@ -34,11 +34,11 @@ const SignIn = () => {
         {error && <p className="mb-4 text-red-500">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="mb-2 block text-n-1" htmlFor="email">
+            <label className="mb-2 block text-n-1" htmlFor="signin-email">
               Email
             </label>
             <input
-              id="email"
+              id="signin-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -47,11 +47,11 @@ const SignIn = () => {
             />
           </div>
           <div className="mb-6">
-            <label className="mb-2 block text-n-1" htmlFor="password">
+            <label className="mb-2 block text-n-1" htmlFor="signin-password">
               Password
             </label>
             <input
-              id="password"
+              id="signin-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

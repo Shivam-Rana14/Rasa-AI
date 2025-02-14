@@ -1,49 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Section from './Section';
 import Button from './Button';
-
-const OCCASIONS = [
-  { id: 'casual', label: 'Casual' },
-  { id: 'formal', label: 'Formal' },
-  { id: 'wedding', label: 'Wedding' },
-  { id: 'party', label: 'Party/Evening' },
-  { id: 'business', label: 'Business' },
-  { id: 'vacation', label: 'Vacation' },
-  { id: 'sports', label: 'Sports/Active' }
-];
-
-const BODY_TYPES = [
-  { id: 'hourglass', label: 'Hourglass' },
-  { id: 'pear', label: 'Pear' },
-  { id: 'rectangle', label: 'Rectangle' },
-  { id: 'apple', label: 'Apple' },
-  { id: 'inverted-triangle', label: 'Inverted Triangle' }
-];
-
-const STYLE_PREFERENCES = [
-  { id: 'minimalist', label: 'Minimalist' },
-  { id: 'classic', label: 'Classic' },
-  { id: 'bohemian', label: 'Bohemian' },
-  { id: 'streetwear', label: 'Streetwear' },
-  { id: 'vintage', label: 'Vintage' },
-  { id: 'preppy', label: 'Preppy' },
-  { id: 'athleisure', label: 'Athleisure' }
-];
-
-const SEASONS = [
-  { id: 'spring', label: 'Spring' },
-  { id: 'summer', label: 'Summer' },
-  { id: 'fall', label: 'Fall' },
-  { id: 'winter', label: 'Winter' }
-];
-
-const DEFAULT_MEASUREMENTS = {
-  height: '67', // 5'7" in inches (average adult height)
-  bust: '36', // average bust measurement in inches
-  waist: '30', // average waist measurement in inches
-  hips: '40' // average hip measurement in inches
-};
+import { DEFAULT_MEASUREMENTS, OCCASIONS, BODY_TYPES, STYLE_PREFERENCES, SEASONS, SKIN_TONE_PALETTES, OUTFIT_RECOMMENDATIONS, ACCESSORY_RECOMMENDATIONS } from '../constants';
 
 const RasaAI = () => {
   const navigate = useNavigate();
@@ -59,48 +18,28 @@ const RasaAI = () => {
     bodyType: '',
     stylePreference: '',
     season: '',
-    sustainabilityPreference: false,
     measurements: { ...DEFAULT_MEASUREMENTS }
   });
   const [analysisResult, setAnalysisResult] = useState(null);
-  const [styleHistory, setStyleHistory] = useState([]);
-  const [favorites, setFavorites] = useState([]);
-  
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    // Load user preferences and history from localStorage
-    const savedPreferences = localStorage.getItem('userPreferences');
-    const savedHistory = localStorage.getItem('styleHistory');
-    const savedFavorites = localStorage.getItem('styleFavorites');
-
-    if (savedPreferences) setPreferences(JSON.parse(savedPreferences));
-    if (savedHistory) setStyleHistory(JSON.parse(savedHistory));
-    if (savedFavorites) setFavorites(JSON.parse(savedFavorites));
-  }, []);
-
-  const saveToHistory = (recommendation) => {
-    const newHistory = [
-      {
-        date: new Date().toISOString(),
-        recommendation,
-        preferences: { ...preferences }
-      },
-      ...styleHistory
-    ].slice(0, 20); // Keep last 20 recommendations
-    
-    setStyleHistory(newHistory);
-    localStorage.setItem('styleHistory', JSON.stringify(newHistory));
-  };
-
-  const toggleFavorite = (item) => {
-    const newFavorites = favorites.includes(item)
-      ? favorites.filter(fav => fav !== item)
-      : [...favorites, item];
-    
-    setFavorites(newFavorites);
-    localStorage.setItem('styleFavorites', JSON.stringify(newFavorites));
+  const handlePreferenceChange = (key, value) => {
+    if (key.includes('measurements.')) {
+      const measurementKey = key.split('.')[1];
+      setPreferences(prev => ({
+        ...prev,
+        measurements: {
+          ...prev.measurements,
+          [measurementKey]: value
+        }
+      }));
+    } else {
+      setPreferences(prev => ({
+        ...prev,
+        [key]: value
+      }));
+    }
   };
 
   // Handle file upload
@@ -167,123 +106,6 @@ const RasaAI = () => {
     }
   };
 
-  const handlePreferenceChange = (field, value) => {
-    setPreferences(prev => {
-      // Handle nested measurements object
-      if (field.includes('.')) {
-        const [parent, child] = field.split('.');
-        return {
-          ...prev,
-          [parent]: {
-            ...prev[parent],
-            [child]: value
-          }
-        };
-      }
-      // Handle regular fields
-      return {
-        ...prev,
-        [field]: value
-      };
-    });
-  };
-
-  const getRecommendations = (skinTone) => {
-    // Enhanced recommendations considering more factors
-    const baseRecommendation = {
-      colorPalette: getColorPaletteForSkinTone(skinTone),
-      outfits: getOutfitsForOccasion(preferences.occasion, skinTone, preferences.gender, preferences.season, preferences.stylePreference),
-      accessories: getAccessories(preferences.stylePreference, preferences.occasion, preferences.gender, preferences.season),
-      seasonal: getSeasonalAdjustments(preferences.season),
-      sustainableOptions: preferences.sustainabilityPreference ? getSustainableAlternatives() : [],
-      bodyTypeRecommendations: getBodyTypeSpecificStyles(preferences.bodyType, preferences.gender)
-    };
-
-    // Save to history
-    saveToHistory(baseRecommendation);
-
-    return baseRecommendation;
-  };
-
-  const getBodyTypeSpecificStyles = (bodyType, gender) => {
-    const styles = {
-      male: {
-        athletic: {
-          tops: ["Fitted t-shirts", "Structured blazers", "V-neck sweaters"],
-          bottoms: ["Straight-leg jeans", "Tailored trousers", "Fitted shorts"],
-          outerwear: ["Bomber jackets", "Structured coats", "Sports jackets"]
-        },
-        slim: {
-          tops: ["Layered looks", "Structured shirts", "Textured sweaters"],
-          bottoms: ["Slim-fit jeans", "Tapered trousers", "Fitted chinos"],
-          outerwear: ["Double-breasted coats", "Denim jackets", "Quilted vests"]
-        },
-        broad: {
-          tops: ["Vertical stripes", "Dark solid colors", "Semi-fitted shirts"],
-          bottoms: ["Classic-fit trousers", "Dark wash jeans", "Pleated pants"],
-          outerwear: ["Single-breasted jackets", "Lightweight coats", "Classic blazers"]
-        }
-      },
-      female: {
-        hourglass: {
-          tops: ["Wrap tops", "V-neck blouses", "Fitted jackets"],
-          bottoms: ["High-waisted skirts", "Bootcut pants", "Pencil skirts"],
-          dresses: ["Wrap dresses", "Belted dresses", "A-line dresses"]
-        },
-        pear: {
-          tops: ["Boat neck tops", "Statement shoulders", "Structured blazers"],
-          bottoms: ["A-line skirts", "Wide-leg pants", "Dark bottom pieces"],
-          dresses: ["Fit and flare dresses", "Empire waist dresses", "A-line silhouettes"]
-        },
-        athletic: {
-          tops: ["Ruffled blouses", "Cowl necks", "Layered tops"],
-          bottoms: ["Full skirts", "Wide-leg trousers", "Textured pants"],
-          dresses: ["Wrap style dresses", "Ruched dresses", "Feminine details"]
-        }
-      }
-    };
-
-    return styles[gender]?.[bodyType] || styles[gender]?.athletic || styles.female.athletic;
-  };
-
-  const getSeasonalAdjustments = (season) => {
-    const adjustments = {
-      spring: {
-        fabrics: ["Light cotton", "Linen blends", "Light denim"],
-        layers: ["Light cardigans", "Denim jackets", "Light blazers"],
-        colors: ["Pastels", "Light neutrals", "Soft brights"]
-      },
-      summer: {
-        fabrics: ["Lightweight cotton", "Linen", "Breathable synthetics"],
-        layers: ["Kimonos", "Light shawls", "Sun protection layers"],
-        colors: ["Bright colors", "Whites", "Light neutrals"]
-      },
-      fall: {
-        fabrics: ["Wool", "Cotton blend", "Leather"],
-        layers: ["Cardigans", "Blazers", "Coats"],
-        colors: ["Earth tones", "Rich jewel tones", "Deep neutrals"]
-      },
-      winter: {
-        fabrics: ["Heavy wool", "Cashmere", "Fleece"],
-        layers: ["Coats", "Parkas", "Thermal layers"],
-        colors: ["Dark neutrals", "Rich jewel tones", "Deep berry shades"]
-      }
-    };
-
-    return adjustments[season] || {};
-  };
-
-  const getFabricRecommendations = (season) => {
-    const seasonalFabrics = {
-      spring: ["Cotton", "Light wool", "Silk blends"],
-      summer: ["Linen", "Light cotton", "Bamboo"],
-      fall: ["Wool", "Cotton blend", "Leather"],
-      winter: ["Heavy wool", "Cashmere", "Fleece"]
-    };
-
-    return seasonalFabrics[season] || [];
-  };
-
   const analyzeSkinTone = async () => {
     if (!image || !preferences.occasion || !preferences.bodyType || !preferences.stylePreference || !preferences.season || !preferences.gender) {
       setError('Please fill in all preferences before analyzing');
@@ -322,7 +144,6 @@ const RasaAI = () => {
       bodyType: '',
       stylePreference: '',
       season: '',
-      sustainabilityPreference: false,
       measurements: { ...DEFAULT_MEASUREMENTS }
     });
   };
@@ -335,114 +156,109 @@ const RasaAI = () => {
         <div>
           <label className="block text-n-3 mb-2">Gender</label>
           <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => handlePreferenceChange('gender', 'male')}
-              className={`px-4 py-2 rounded-lg text-sm ${
-                preferences.gender === 'male'
-                  ? 'bg-color-1 text-n-1'
-                  : 'bg-n-5 text-n-3 hover:bg-n-4'
-              } transition-colors`}
-            >
-              Male
-            </button>
-            <button
-              onClick={() => handlePreferenceChange('gender', 'female')}
-              className={`px-4 py-2 rounded-lg text-sm ${
-                preferences.gender === 'female'
-                  ? 'bg-color-1 text-n-1'
-                  : 'bg-n-5 text-n-3 hover:bg-n-4'
-              } transition-colors`}
-            >
-              Female
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-n-3 mb-2">Occasion</label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {OCCASIONS.map(occasion => (
+            {['male', 'female'].map(gender => (
               <button
-                key={occasion.id}
-                onClick={() => handlePreferenceChange('occasion', occasion.id)}
+                key={gender}
+                onClick={() => {
+                  handlePreferenceChange('gender', gender);
+                  // Reset other preferences when gender changes
+                  setPreferences(prev => ({
+                    ...prev,
+                    gender,
+                    occasion: '',
+                    bodyType: '',
+                    stylePreference: ''
+                  }));
+                }}
                 className={`px-4 py-2 rounded-lg text-sm ${
-                  preferences.occasion === occasion.id
+                  preferences.gender === gender
                     ? 'bg-color-1 text-n-1'
                     : 'bg-n-5 text-n-3 hover:bg-n-4'
                 } transition-colors`}
               >
-                {occasion.label}
+                {gender.charAt(0).toUpperCase() + gender.slice(1)}
               </button>
             ))}
           </div>
         </div>
 
-        <div>
-          <label className="block text-n-3 mb-2">Body Type</label>
-          <div className="grid grid-cols-3 gap-3">
-            {BODY_TYPES.map(bodyType => (
-              <button
-                key={bodyType.id}
-                onClick={() => handlePreferenceChange('bodyType', bodyType.id)}
-                className={`px-4 py-2 rounded-lg text-sm ${
-                  preferences.bodyType === bodyType.id
-                    ? 'bg-color-1 text-n-1'
-                    : 'bg-n-5 text-n-3 hover:bg-n-4'
-                } transition-colors`}
-              >
-                {bodyType.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        {preferences.gender && (
+          <>
+            <div>
+              <label className="block text-n-3 mb-2">Occasion</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {OCCASIONS[preferences.gender].map(occasion => (
+                  <button
+                    key={occasion}
+                    onClick={() => handlePreferenceChange('occasion', occasion)}
+                    className={`px-4 py-2 rounded-lg text-sm ${
+                      preferences.occasion === occasion
+                        ? 'bg-color-1 text-n-1'
+                        : 'bg-n-5 text-n-3 hover:bg-n-4'
+                    } transition-colors`}
+                  >
+                    {occasion.charAt(0).toUpperCase() + occasion.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <div>
-          <label className="block text-n-3 mb-2">Style Preference</label>
-          <div className="grid grid-cols-3 gap-3">
-            {STYLE_PREFERENCES.map(style => (
-              <button
-                key={style.id}
-                onClick={() => handlePreferenceChange('stylePreference', style.id)}
-                className={`px-4 py-2 rounded-lg text-sm ${
-                  preferences.stylePreference === style.id
-                    ? 'bg-color-1 text-n-1'
-                    : 'bg-n-5 text-n-3 hover:bg-n-4'
-                } transition-colors`}
-              >
-                {style.label}
-              </button>
-            ))}
-          </div>
-        </div>
+            <div>
+              <label className="block text-n-3 mb-2">Body Type</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {BODY_TYPES[preferences.gender].map(type => (
+                  <button
+                    key={type}
+                    onClick={() => handlePreferenceChange('bodyType', type)}
+                    className={`px-4 py-2 rounded-lg text-sm ${
+                      preferences.bodyType === type
+                        ? 'bg-color-1 text-n-1'
+                        : 'bg-n-5 text-n-3 hover:bg-n-4'
+                    } transition-colors`}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-n-3 mb-2">Style Preference</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {STYLE_PREFERENCES[preferences.gender].map(style => (
+                  <button
+                    key={style}
+                    onClick={() => handlePreferenceChange('stylePreference', style)}
+                    className={`px-4 py-2 rounded-lg text-sm ${
+                      preferences.stylePreference === style
+                        ? 'bg-color-1 text-n-1'
+                        : 'bg-n-5 text-n-3 hover:bg-n-4'
+                    } transition-colors`}
+                  >
+                    {style.charAt(0).toUpperCase() + style.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
 
         <div>
           <label className="block text-n-3 mb-2">Season</label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {SEASONS.map(season => (
               <button
-                key={season.id}
-                onClick={() => handlePreferenceChange('season', season.id)}
+                key={season}
+                onClick={() => handlePreferenceChange('season', season)}
                 className={`px-4 py-2 rounded-lg text-sm ${
-                  preferences.season === season.id
+                  preferences.season === season
                     ? 'bg-color-1 text-n-1'
                     : 'bg-n-5 text-n-3 hover:bg-n-4'
                 } transition-colors`}
               >
-                {season.label}
+                {season.charAt(0).toUpperCase() + season.slice(1)}
               </button>
             ))}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-n-3 mb-2">Sustainability Preference</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={preferences.sustainabilityPreference}
-              onChange={() => handlePreferenceChange('sustainabilityPreference', !preferences.sustainabilityPreference)}
-            />
-            <span>Prefer sustainable options</span>
           </div>
         </div>
 
@@ -450,52 +266,48 @@ const RasaAI = () => {
           <label className="block text-n-3 mb-2">Measurements</label>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col">
+              <label className="text-sm text-n-3 mb-1">Height (inches)</label>
               <input
                 type="number"
                 value={preferences.measurements.height}
                 onChange={(e) => handlePreferenceChange('measurements.height', e.target.value)}
-                placeholder="Height (in)"
+                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
                 min="0"
                 step="1"
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-3"
               />
-              <span className="text-xs text-n-3 mt-1">Height in inches (default: 5'7")</span>
             </div>
             <div className="flex flex-col">
+              <label className="text-sm text-n-3 mb-1">Bust (inches)</label>
               <input
                 type="number"
                 value={preferences.measurements.bust}
                 onChange={(e) => handlePreferenceChange('measurements.bust', e.target.value)}
-                placeholder="Bust (in)"
+                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
                 min="0"
                 step="1"
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-3"
               />
-              <span className="text-xs text-n-3 mt-1">Bust in inches</span>
             </div>
             <div className="flex flex-col">
+              <label className="text-sm text-n-3 mb-1">Waist (inches)</label>
               <input
                 type="number"
                 value={preferences.measurements.waist}
                 onChange={(e) => handlePreferenceChange('measurements.waist', e.target.value)}
-                placeholder="Waist (in)"
+                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
                 min="0"
                 step="1"
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-3"
               />
-              <span className="text-xs text-n-3 mt-1">Waist in inches</span>
             </div>
             <div className="flex flex-col">
+              <label className="text-sm text-n-3 mb-1">Hips (inches)</label>
               <input
                 type="number"
                 value={preferences.measurements.hips}
                 onChange={(e) => handlePreferenceChange('measurements.hips', e.target.value)}
-                placeholder="Hips (in)"
+                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
                 min="0"
                 step="1"
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-3"
               />
-              <span className="text-xs text-n-3 mt-1">Hips in inches</span>
             </div>
           </div>
         </div>
@@ -642,22 +454,6 @@ const RasaAI = () => {
               </div>
             </div>
 
-            {preferences.sustainabilityPreference && (
-              <div>
-                <h4 className="text-n-3 mb-2">Sustainable Options</h4>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {analysisResult.recommendations.sustainableOptions.map((option, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-color-1 rounded-lg text-n-1 text-sm"
-                    >
-                      {option}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div>
               <h4 className="text-n-3 mb-2">Body Type Recommendations</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -684,403 +480,187 @@ const RasaAI = () => {
     </div>
   );
 
-  const getColorPaletteForSkinTone = (skinTone) => {
-    const palettes = {
-      1: { // Very Fair
-        recommended: [
-          "Soft pastels",
-          "Light pink",
-          "Powder blue",
-          "Mint green",
-          "Lavender"
-        ],
-        avoid: [
-          "Neon colors",
-          "Orange",
-          "Bright yellow",
-          "Hot pink"
-        ],
-        neutrals: [
-          "Navy",
-          "Gray",
-          "Soft white"
-        ],
-        description: "Your fair skin tone looks best with soft, cool colors. Pastels and muted shades enhance your natural complexion."
+  const getBodyTypeSpecificStyles = (bodyType, gender) => {
+    const styles = {
+      male: {
+        athletic: {
+          tops: ["Fitted t-shirts", "Structured blazers", "V-neck sweaters"],
+          bottoms: ["Straight-leg jeans", "Tailored trousers", "Fitted shorts"],
+          outerwear: ["Bomber jackets", "Structured coats", "Sports jackets"]
+        },
+        slim: {
+          tops: ["Layered looks", "Structured shirts", "Textured sweaters"],
+          bottoms: ["Slim-fit jeans", "Tapered trousers", "Fitted chinos"],
+          outerwear: ["Double-breasted coats", "Denim jackets", "Quilted vests"]
+        },
+        broad: {
+          tops: ["Vertical stripes", "Dark solid colors", "Semi-fitted shirts"],
+          bottoms: ["Classic-fit trousers", "Dark wash jeans", "Pleated pants"],
+          outerwear: ["Single-breasted jackets", "Lightweight coats", "Classic blazers"]
+        }
       },
-      2: { // Fair
-        recommended: [
-          "Jewel tones",
-          "Deep purple",
-          "Forest green",
-          "Navy blue",
-          "Burgundy"
-        ],
-        avoid: [
-          "Bright orange",
-          "Neon yellow",
-          "Brown",
-          "Beige"
-        ],
-        neutrals: [
-          "Charcoal",
-          "Navy",
-          "Cool gray"
-        ],
-        description: "Your fair skin tone pairs beautifully with rich jewel tones. These colors create a striking contrast without overwhelming."
-      },
-      3: { // Light Medium
-        recommended: [
-          "Coral",
-          "Teal",
-          "Soft red",
-          "Dusty rose",
-          "Sage green"
-        ],
-        avoid: [
-          "Neon green",
-          "Electric blue",
-          "Bright purple",
-          "Hot pink"
-        ],
-        neutrals: [
-          "Taupe",
-          "Soft brown",
-          "Warm gray"
-        ],
-        description: "Your light medium skin tone works well with both warm and cool colors. Soft, medium-intensity shades are particularly flattering."
-      },
-      4: { // Medium
-        recommended: [
-          "Rich brown",
-          "Olive green",
-          "Deep blue",
-          "Warm red",
-          "Golden yellow"
-        ],
-        avoid: [
-          "Pale pastels",
-          "Light gray",
-          "Washed-out colors"
-        ],
-        neutrals: [
-          "Khaki",
-          "Chocolate brown",
-          "Deep navy"
-        ],
-        description: "Your medium skin tone can carry both rich and earthy colors beautifully. Warm, saturated hues complement your natural coloring."
-      },
-      5: { // Medium Dark
-        recommended: [
-          "Bright yellow",
-          "Electric blue",
-          "Vibrant orange",
-          "Hot pink",
-          "Emerald green"
-        ],
-        avoid: [
-          "Pale browns",
-          "Muted pastels",
-          "Light beige"
-        ],
-        neutrals: [
-          "Dark brown",
-          "Deep gray",
-          "Rich navy"
-        ],
-        description: "Your medium dark skin tone shines with bright, vibrant colors. Bold and saturated hues create stunning looks."
-      },
-      6: { // Dark
-        recommended: [
-          "Pure white",
-          "Bright red",
-          "Royal blue",
-          "Fuchsia",
-          "Kelly green"
-        ],
-        avoid: [
-          "Dark brown",
-          "Navy blue",
-          "Charcoal gray"
-        ],
-        neutrals: [
-          "Light gray",
-          "Cream",
-          "Camel"
-        ],
-        description: "Your dark skin tone is complemented beautifully by bright, clear colors. Light and bright shades create stunning contrast."
-      },
-      7: { // Very Dark
-        recommended: [
-          "Bright white",
-          "Neon pink",
-          "Lime green",
-          "Electric blue",
-          "Bright orange"
-        ],
-        avoid: [
-          "Dark colors",
-          "Deep burgundy",
-          "Forest green"
-        ],
-        neutrals: [
-          "Light beige",
-          "Soft white",
-          "Pearl gray"
-        ],
-        description: "Your deep skin tone is perfect for the brightest, most vibrant colors. These create beautiful contrast and make a bold statement."
+      female: {
+        hourglass: {
+          tops: ["Wrap tops", "V-neck blouses", "Fitted jackets"],
+          bottoms: ["High-waisted skirts", "Bootcut pants", "Pencil skirts"],
+          dresses: ["Wrap dresses", "Belted dresses", "A-line dresses"]
+        },
+        pear: {
+          tops: ["Boat neck tops", "Statement shoulders", "Structured blazers"],
+          bottoms: ["A-line skirts", "Wide-leg pants", "Dark bottom pieces"],
+          dresses: ["Fit and flare dresses", "Empire waist dresses", "A-line silhouettes"]
+        },
+        athletic: {
+          tops: ["Ruffled blouses", "Cowl necks", "Layered tops"],
+          bottoms: ["Full skirts", "Wide-leg trousers", "Textured pants"],
+          dresses: ["Wrap style dresses", "Ruched dresses", "Feminine details"]
+        }
       }
     };
 
-    return palettes[skinTone] || {
-      recommended: ["Universal colors"],
-      avoid: ["No specific colors to avoid"],
-      neutrals: ["Basic neutrals"],
-      description: "We couldn't determine your exact skin tone. Try colors that make you feel confident!"
+    return styles[gender]?.[bodyType] || styles[gender]?.athletic || styles.female.athletic;
+  };
+
+  const getSeasonalAdjustments = (season) => {
+    const adjustments = {
+      spring: {
+        fabrics: ["Light cotton", "Linen blends", "Light denim"],
+        layers: ["Light cardigans", "Denim jackets", "Light blazers"],
+        colors: ["Pastels", "Light neutrals", "Soft brights"]
+      },
+      summer: {
+        fabrics: ["Lightweight cotton", "Linen", "Breathable synthetics"],
+        layers: ["Kimonos", "Light shawls", "Sun protection layers"],
+        colors: ["Bright colors", "Whites", "Light neutrals"]
+      },
+      fall: {
+        fabrics: ["Wool", "Cotton blend", "Leather"],
+        layers: ["Cardigans", "Blazers", "Coats"],
+        colors: ["Earth tones", "Rich jewel tones", "Deep neutrals"]
+      },
+      winter: {
+        fabrics: ["Heavy wool", "Cashmere", "Fleece"],
+        layers: ["Coats", "Parkas", "Thermal layers"],
+        colors: ["Dark neutrals", "Rich jewel tones", "Deep berry shades"]
+      }
     };
+
+    return adjustments[season] || {};
+  };
+
+  const getFabricRecommendations = (season) => {
+    const seasonalFabrics = {
+      spring: ["Cotton", "Light wool", "Silk blends"],
+      summer: ["Linen", "Light cotton", "Bamboo"],
+      fall: ["Wool", "Cotton blend", "Leather"],
+      winter: ["Heavy wool", "Cashmere", "Fleece"]
+    };
+
+    return seasonalFabrics[season] || [];
+  };
+
+  const getRecommendations = (skinTone) => {
+    const outfits = getOutfitsForOccasion(preferences.occasion, skinTone, preferences.gender, preferences.season, preferences.stylePreference);
+    const accessories = getAccessories(preferences.stylePreference, preferences.occasion, preferences.gender, preferences.season);
+    
+    // Enhanced recommendations considering more factors
+    const baseRecommendation = {
+      colorPalette: getColorPaletteForSkinTone(skinTone),
+      outfits: Array.isArray(outfits) ? outfits : ["Classic pieces suitable for any occasion"],
+      accessories: Array.isArray(accessories) ? accessories : ["Classic accessories that complement any outfit"],
+      seasonal: getSeasonalAdjustments(preferences.season),
+      bodyTypeRecommendations: getBodyTypeSpecificStyles(preferences.bodyType, preferences.gender)
+    };
+
+    return baseRecommendation;
+  };
+
+  const getColorPaletteForSkinTone = (skinTone) => {
+    return SKIN_TONE_PALETTES[skinTone] || SKIN_TONE_PALETTES[1];
   };
 
   const getOutfitsForOccasion = (occasion, skinTone, gender, season, stylePreference) => {
-    const outfits = {
+    // First try exact match
+    const exactMatch = OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[season];
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // If no exact match, try to find a similar style
+    const availableStyles = Object.keys(OUTFIT_RECOMMENDATIONS[gender]?.[occasion] || {});
+    if (availableStyles.length > 0) {
+      // Try classic style first if available, otherwise use the first available style
+      const fallbackStyle = availableStyles.includes('classic') ? 'classic' : availableStyles[0];
+      const fallbackRecommendations = OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[fallbackStyle]?.[season];
+      if (fallbackRecommendations) {
+        return fallbackRecommendations;
+      }
+    }
+
+    // If still no match, try to find any recommendations for this gender and occasion
+    const defaultOutfits = {
       male: {
-        casual: {
-          spring: {
-            minimal: [
-              "Light cotton t-shirt with khaki chinos",
-              "White polo with light wash jeans",
-              "Gray henley with navy shorts",
-              "Light denim jacket with white tee and beige pants",
-              "Pastel oxford shirt with light chinos"
-            ],
-            bold: [
-              "Printed short sleeve shirt with white pants",
-              "Bright polo with patterned shorts",
-              "Color block tee with light jeans",
-              "Statement print tee with khaki shorts",
-              "Vibrant henley with light chinos"
-            ],
-            classic: [
-              "Navy polo with beige chinos",
-              "Light blue oxford with khaki pants",
-              "White henley with light wash jeans",
-              "Striped tee with navy shorts",
-              "Light sweater with cream chinos"
-            ]
-          },
-          summer: {
-            minimal: [
-              "Linen shirt with lightweight chinos",
-              "Cotton crew neck with shorts",
-              "Light jersey polo with breathable pants",
-              "Simple v-neck with linen shorts",
-              "Basic tee with cotton shorts"
-            ],
-            bold: [
-              "Tropical print shirt with white shorts",
-              "Bright colored polo with pattern shorts",
-              "Statement tee with light pants",
-              "Vibrant tank with neutral shorts",
-              "Printed short sleeve with light jeans"
-            ],
-            classic: [
-              "Pique polo with khaki shorts",
-              "Cotton oxford with light chinos",
-              "White linen shirt with navy shorts",
-              "Classic tee with beige shorts",
-              "Light chambray with khaki shorts"
-            ]
-          },
-          fall: {
-            minimal: [
-              "Gray sweater with dark jeans",
-              "Navy long sleeve tee with khakis",
-              "Black turtleneck with gray pants",
-              "Charcoal henley with dark chinos",
-              "Simple quarter-zip with jeans"
-            ],
-            bold: [
-              "Burgundy sweater with black jeans",
-              "Patterned flannel with dark chinos",
-              "Colorful knit with gray pants",
-              "Statement cardigan with dark jeans",
-              "Rich colored henley with khakis"
-            ],
-            classic: [
-              "Navy sweater with khaki chinos",
-              "Brown flannel with dark jeans",
-              "Olive henley with tan chinos",
-              "Gray cardigan with navy pants",
-              "Blue quarter-zip with khakis"
-            ]
-          },
-          winter: {
-            minimal: [
-              "Black turtleneck with wool pants",
-              "Charcoal sweater with dark jeans",
-              "Gray cashmere with black chinos",
-              "Navy wool sweater with gray pants",
-              "Simple knit with dark trousers"
-            ],
-            bold: [
-              "Bright sweater with dark jeans",
-              "Patterned turtleneck with black pants",
-              "Statement knit with charcoal trousers",
-              "Rich colored wool with dark chinos",
-              "Colorful cardigan with gray pants"
-            ],
-            classic: [
-              "Navy turtleneck with wool trousers",
-              "Camel sweater with dark jeans",
-              "Gray cashmere with navy pants",
-              "Brown knit with khaki chinos",
-              "Classic cardigan with wool pants"
-            ]
-          }
-        },
-        formal: {
-          spring: {
-            minimal: [
-              "Light gray suit with white shirt",
-              "Navy blazer with light gray pants",
-              "Khaki suit with light blue shirt",
-              "Light blue blazer with cream pants",
-              "Beige suit with white shirt"
-            ],
-            bold: [
-              "Blue suit with patterned shirt",
-              "Burgundy blazer with light gray pants",
-              "Patterned suit with solid shirt",
-              "Colored blazer with contrast pants",
-              "Statement suit with subtle shirt"
-            ],
-            classic: [
-              "Navy suit with light blue shirt",
-              "Gray blazer with tan pants",
-              "Blue suit with white shirt",
-              "Tan suit with blue shirt",
-              "Navy blazer with khaki pants"
-            ]
-          },
-          // ... Similar structure for other seasons
-        },
-        business: {
-          // ... Similar structure for all seasons
-        },
-        party: {
-          // ... Similar structure for all seasons
-        }
+        casual: ["Classic t-shirt with jeans", "Polo shirt with chinos", "Button-down shirt with dark pants"],
+        formal: ["Navy suit with white shirt", "Charcoal suit with light blue shirt", "Black suit with crisp white shirt"],
+        business: ["Navy blazer with gray trousers", "Gray suit with white shirt", "Charcoal suit with light shirt"],
+        party: ["Dark jeans with dress shirt", "Blazer with dark jeans", "Dress pants with fitted shirt"],
+        sports: ["Athletic shirt with track pants", "Performance polo with shorts", "Training jacket with matching pants"],
+        wedding: ["Classic black suit", "Navy suit with tie", "Gray suit with formal shirt"]
       },
       female: {
-        casual: {
-          spring: {
-            minimal: [
-              "White t-shirt dress with light denim jacket",
-              "Beige sweater with light wash jeans",
-              "Simple blouse with cream pants",
-              "Light knit top with white jeans",
-              "Basic tee with pastel skirt"
-            ],
-            bold: [
-              "Floral dress with denim jacket",
-              "Bright blouse with white pants",
-              "Patterned top with light jeans",
-              "Colorful sweater with neutral pants",
-              "Statement top with light skirt"
-            ],
-            classic: [
-              "Navy blazer with white tee and jeans",
-              "Striped shirt with khaki pants",
-              "Light cardigan with basic tee and jeans",
-              "White button-down with light pants",
-              "Classic sweater with denim"
-            ]
-          },
-          summer: {
-            minimal: [
-              "Linen dress in neutral tone",
-              "Simple tank with flowing skirt",
-              "Cotton tee with light shorts",
-              "Basic cami with linen pants",
-              "Light jersey dress"
-            ],
-            bold: [
-              "Tropical print dress",
-              "Bright colored romper",
-              "Statement maxi dress",
-              "Patterned shorts with solid top",
-              "Colorful sundress"
-            ],
-            classic: [
-              "White linen shirt with cropped pants",
-              "Navy dress with white accents",
-              "Striped tee with white shorts",
-              "Light denim dress",
-              "Cotton shirt dress"
-            ]
-          }
-          // ... Similar structure for fall and winter
-        },
-        formal: {
-          // ... Similar structure for all seasons
-        },
-        business: {
-          // ... Similar structure for all seasons
-        },
-        party: {
-          // ... Similar structure for all seasons
-        }
+        casual: ["Jeans with blouse", "Casual dress", "Sweater with leggings"],
+        formal: ["Little black dress", "Formal pantsuit", "Evening gown"],
+        business: ["Blazer with pencil skirt", "Professional pantsuit", "Blouse with tailored pants"],
+        party: ["Cocktail dress", "Stylish jumpsuit", "Statement dress"],
+        cocktail: ["Knee-length cocktail dress", "Elegant jumpsuit", "Chic evening dress"],
+        wedding: ["Formal gown", "Elegant dress", "Sophisticated evening wear"],
+        brunch: ["Sundress", "Blouse with skirt", "Casual dress"]
       }
     };
 
-    return outfits[gender]?.[occasion]?.[season]?.[stylePreference] || 
-           outfits[gender]?.[occasion]?.spring?.classic || 
-           ["No specific recommendations available for these preferences"];
+    return defaultOutfits[gender]?.[occasion] || ["Classic pieces suitable for any occasion"];
   };
 
   const getAccessories = (stylePreference, occasion, gender, season) => {
-    const accessories = {
+    // First try exact match
+    const exactMatch = ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[season];
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // If no exact match, try to find a similar style
+    const availableStyles = Object.keys(ACCESSORY_RECOMMENDATIONS[gender]?.[occasion] || {});
+    if (availableStyles.length > 0) {
+      // Try classic style first if available, otherwise use the first available style
+      const fallbackStyle = availableStyles.includes('classic') ? 'classic' : availableStyles[0];
+      const fallbackRecommendations = ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[fallbackStyle]?.[season];
+      if (fallbackRecommendations) {
+        return fallbackRecommendations;
+      }
+    }
+
+    // If still no match, provide default accessories based on gender and occasion
+    const defaultAccessories = {
       male: {
-        casual: {
-          spring: {
-            minimal: ["Simple leather watch", "Classic sunglasses", "Canvas belt"],
-            bold: ["Colorful watch", "Statement sunglasses", "Patterned belt", "Bright pocket square"],
-            classic: ["Brown leather watch", "Aviator sunglasses", "Leather belt", "Simple bracelet"]
-          },
-          summer: {
-            minimal: ["Sport watch", "Light sunglasses", "Woven belt"],
-            bold: ["Bright sport watch", "Colored sunglasses", "Statement hat", "Beaded bracelet"],
-            classic: ["Steel watch", "Classic sunglasses", "Braided leather belt"]
-          }
-          // ... Similar structure for fall and winter
-        },
-        formal: {
-          // ... Similar structure for all seasons
-        }
-        // ... Similar structure for other occasions
+        casual: ["Classic watch", "Leather belt", "Sunglasses"],
+        formal: ["Dress watch", "Tie", "Cufflinks"],
+        business: ["Professional watch", "Leather belt", "Tie clip"],
+        party: ["Fashion watch", "Statement belt", "Pocket square"],
+        sports: ["Sports watch", "Athletic socks", "Headband"],
+        wedding: ["Formal watch", "Silk tie", "Dress shoes"]
       },
       female: {
-        casual: {
-          spring: {
-            minimal: ["Simple pendant necklace", "Stud earrings", "Delicate bracelet"],
-            bold: ["Statement earrings", "Layered necklaces", "Chunky bracelets", "Colorful scarf"],
-            classic: ["Pearl earrings", "Chain necklace", "Leather strap watch", "Simple ring"]
-          },
-          summer: {
-            minimal: ["Simple anklet", "Small hoops", "Minimalist necklace"],
-            bold: ["Colorful statement earrings", "Shell necklace", "Stacked bracelets", "Hair accessories"],
-            classic: ["Pearl studs", "Gold chain", "Classic watch", "Simple bangles"]
-          }
-          // ... Similar structure for fall and winter
-        },
-        formal: {
-          // ... Similar structure for all seasons
-        }
-        // ... Similar structure for other occasions
+        casual: ["Simple necklace", "Stud earrings", "Classic watch"],
+        formal: ["Statement necklace", "Elegant earrings", "Evening clutch"],
+        business: ["Pearl earrings", "Delicate necklace", "Professional watch"],
+        party: ["Statement jewelry", "Evening bag", "Fashion heels"],
+        cocktail: ["Crystal earrings", "Evening clutch", "Statement bracelet"],
+        wedding: ["Fine jewelry set", "Evening bag", "Hair accessories"],
+        brunch: ["Delicate jewelry", "Sunglasses", "Fashion watch"]
       }
     };
 
-    return accessories[gender]?.[occasion]?.[season]?.[stylePreference] || 
-           accessories[gender]?.[occasion]?.spring?.classic || 
-           ["Classic accessories suitable for any occasion"];
+    return defaultAccessories[gender]?.[occasion] || ["Classic accessories that complement any outfit"];
   };
 
   const getSustainableAlternatives = () => {
