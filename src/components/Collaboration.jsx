@@ -1,5 +1,5 @@
 import { rasaSymbol, check } from "../assets";
-import { collabApps, collabContent, collabText0 ,collabText1 ,collabText2 } from "../constants";
+import { collabApps, collabContent } from "../constants";
 import Button from "./Button";
 import Section from "./Section";
 import { LeftCurve, RightCurve } from "./design/Collaboration";
