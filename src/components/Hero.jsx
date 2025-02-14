@@ -39,7 +39,7 @@ const Hero = () => {
           <p className="body-1 max-w-3xl mx-auto mb-6 text-n-2 lg:mb-8">
             Unleash Your Style Potential with RASA.ai - Where AI Meets Fashion!
           </p>
-          <Button href="/pricing" white>
+          <Button href="/rasa-ai" white>
             Get started
           </Button>
         </div>
