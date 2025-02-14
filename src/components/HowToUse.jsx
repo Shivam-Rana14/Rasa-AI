@@ -4,7 +4,7 @@ import Section from "./Section";
 import { GradientLight } from "./design/Benefits";
 import ClipPath from "../assets/svg/ClipPath";
 import Arrow from "../assets/svg/Arrow";
-
+import Button from "./Button";
 const HowToUse = () => {
   return (
     <Section id="how-to-use">
@@ -56,13 +56,14 @@ const HowToUse = () => {
                 className="absolute inset-0.5 bg-n-8"
                 style={{ clipPath: "url(#benefits)" }}
               >
-                <div className="absolute inset-0 opacity-0 transition-opacity hover:opacity-10">
-                </div>
+                <div className="absolute inset-0 opacity-0 transition-opacity hover:opacity-10"></div>
               </div>
 
               <ClipPath />
             </div>
           ))}
+
+          <Button href="/rasa-ai">Try it now</Button>
         </div>
       </div>
     </Section>
