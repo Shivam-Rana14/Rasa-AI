@@ -7,25 +7,41 @@ import HowToUse from "./components/HowToUse";
 import Pricing from "./components/Pricing";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import RasaAI from "./components/RasaAI";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
-
+import { Routes, Route } from "react-router-dom";
 
 const App = () => {
   return (
     <AuthProvider>
       <div className="pt-[4.75rem] lg:pt-[5.25rem] overflow-hidden">
         <Header />
-        <div id="signIn" className="hidden">
-          <SignIn />
-        </div>
-        <div id="signUp" className="hidden">
-          <SignUp />
-        </div>
-        <Hero />
-        <Benefits />
-        <Collaboration />
-          <HowToUse />
-          <Pricing />
+        <Routes>
+          <Route 
+            path="/rasa-ai" 
+            element={
+              <ProtectedRoute>
+                <RasaAI />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/" element={
+            <>
+              <div id="signIn" className="hidden">
+                <SignIn />
+              </div>
+              <div id="signUp" className="hidden">
+                <SignUp />
+              </div>
+              <Hero />
+              <Benefits />
+              <Collaboration />
+              <HowToUse />
+              <Pricing />
+            </>
+          } />
+        </Routes>
       </div>
       <ButtonGradient />
     </AuthProvider>
