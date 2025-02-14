@@ -26,21 +26,25 @@ const Header = () => {
   };
 
   const handleClick = (e, url) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
-    if (url.startsWith('#')) {
-      // Handle anchor links
-      const element = document.querySelector(url);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      // Handle route navigation
-      if (url === '/rasa-ai' && !user) {
-        // If trying to access Rasa AI without being logged in
-        handleAuthClick('signIn');
+    if (url) {
+      if (url.startsWith('#')) {
+        // Handle anchor links
+        const element = document.querySelector(url);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       } else {
-        navigate(url);
+        // Handle route navigation
+        if (url === '/rasa-ai' && !user) {
+          // If trying to access Rasa AI without being logged in
+          handleAuthClick('signIn');
+        } else {
+          navigate(url);
+        }
       }
     }
 
@@ -52,7 +56,11 @@ const Header = () => {
 
   const handleAuthClick = (formId) => {
     showAuthForm(formId);
-    handleClick();
+    // Close navigation if it's open
+    if (openNavigation) {
+      enablePageScroll();
+      setOpenNavigation(false);
+    }
   };
 
   const handleSignOut = () => {
