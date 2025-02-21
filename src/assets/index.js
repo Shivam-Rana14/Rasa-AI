@@ -8,7 +8,12 @@ import smallSphere from "./4-small.png";
 import grid from "./grid.png";
 import check2 from "./check-02.svg";
 import loading1 from "./loading-01.svg";
-import yourlogo from "./yourlogo.svg";
+
+import ajio from "./ajio.svg";
+import amazon from "./amazon.svg";
+import myntra from "./myntra.svg";
+import nykaa from "./nykaa.svg";
+import westside from "./westside.svg";
 import homeSmile from "./home-smile.svg";
 import file02 from "./file-02.svg";
 import searchMd from "./search-md.svg";
@@ -76,6 +81,11 @@ import telegram from "./socials/telegram.svg";
 import twitter from "./socials/twitter.svg";
 
 export {
+  amazon,
+  myntra,
+  nykaa,
+  westside,
+  ajio,
   rasa,
   check,
   check2,
@@ -86,7 +96,6 @@ export {
   gradient,
   smallSphere,
   grid,
-  yourlogo,
   homeSmile,
   file02,
   searchMd,

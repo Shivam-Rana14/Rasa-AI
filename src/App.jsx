@@ -18,29 +18,32 @@ const App = () => {
       <div className="pt-[4.75rem] lg:pt-[5.25rem] overflow-hidden">
         <Header />
         <Routes>
-          <Route 
-            path="/rasa-ai" 
+          <Route
+            path="/rasa-ai"
             element={
               <ProtectedRoute>
                 <RasaAI />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route path="/" element={
-            <>
-              <div id="signIn" className="hidden">
-                <SignIn />
-              </div>
-              <div id="signUp" className="hidden">
-                <SignUp />
-              </div>
-              <Hero />
-              <Benefits />
-              <Collaboration />
-              <HowToUse />
-              <Pricing />
-            </>
-          } />
+          <Route
+            path="/"
+            element={
+              <>
+                <div id="signIn" className="hidden">
+                  <SignIn />
+                </div>
+                <div id="signUp" className="hidden">
+                  <SignUp />
+                </div>
+                <Hero />
+                <Benefits />
+                <Collaboration />
+                <HowToUse />
+                <Pricing />
+              </>
+            }
+          />
         </Routes>
       </div>
       <ButtonGradient />

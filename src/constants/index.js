@@ -20,7 +20,11 @@ import {
   recording03,
   searchMd,
   slack,
-  yourlogo,
+  ajio,
+  westside,
+  nykaa,
+  myntra,
+  amazon,
 } from "../assets";
 
 export const navigation = [
@@ -68,7 +72,7 @@ export const heroIcons = [homeSmile, file02, searchMd, plusSquare];
 
 export const notificationImages = [notification4, notification3, notification2];
 
-export const companyLogos = [yourlogo, yourlogo, yourlogo, yourlogo, yourlogo];
+export const companyLogos = [ajio, amazon, nykaa, myntra, westside];
 
 export const DEFAULT_MEASUREMENTS = {
   height: "57", // 5'7" in inches (average adult height)
@@ -153,7 +157,7 @@ export const collabApps = [
   },
   {
     id: "2",
-    title: "Nykaa",
+    title: "Myntra",
     icon: discord,
     width: 36,
     height: 28,
@@ -400,36 +404,44 @@ export const styles = {
     athletic: {
       tops: ["Fitted t-shirts", "Structured blazers", "V-neck sweaters"],
       bottoms: ["Straight-leg jeans", "Tailored trousers", "Fitted shorts"],
-      outerwear: ["Bomber jackets", "Structured coats", "Sports jackets"]
+      outerwear: ["Bomber jackets", "Structured coats", "Sports jackets"],
     },
     slim: {
       tops: ["Layered looks", "Structured shirts", "Textured sweaters"],
       bottoms: ["Slim-fit jeans", "Tapered trousers", "Fitted chinos"],
-      outerwear: ["Double-breasted coats", "Denim jackets", "Quilted vests"]
+      outerwear: ["Double-breasted coats", "Denim jackets", "Quilted vests"],
     },
     broad: {
       tops: ["Vertical stripes", "Dark solid colors", "Semi-fitted shirts"],
       bottoms: ["Classic-fit trousers", "Dark wash jeans", "Pleated pants"],
-      outerwear: ["Single-breasted jackets", "Lightweight coats", "Classic blazers"]
-    }
+      outerwear: [
+        "Single-breasted jackets",
+        "Lightweight coats",
+        "Classic blazers",
+      ],
+    },
   },
   female: {
     hourglass: {
       tops: ["Wrap tops", "V-neck blouses", "Fitted jackets"],
       bottoms: ["High-waisted skirts", "Bootcut pants", "Pencil skirts"],
-      dresses: ["Wrap dresses", "Belted dresses", "A-line dresses"]
+      dresses: ["Wrap dresses", "Belted dresses", "A-line dresses"],
     },
     pear: {
       tops: ["Boat neck tops", "Statement shoulders", "Structured blazers"],
       bottoms: ["A-line skirts", "Wide-leg pants", "Dark bottom pieces"],
-      dresses: ["Fit and flare dresses", "Empire waist dresses", "A-line silhouettes"]
+      dresses: [
+        "Fit and flare dresses",
+        "Empire waist dresses",
+        "A-line silhouettes",
+      ],
     },
     athletic: {
       tops: ["Ruffled blouses", "Cowl necks", "Layered tops"],
       bottoms: ["Full skirts", "Wide-leg trousers", "Textured pants"],
-      dresses: ["Wrap style dresses", "Ruched dresses", "Feminine details"]
-    }
-  }
+      dresses: ["Wrap style dresses", "Ruched dresses", "Feminine details"],
+    },
+  },
 };
 
 export const OUTFIT_RECOMMENDATIONS = {
