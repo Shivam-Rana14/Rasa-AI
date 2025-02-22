@@ -39,12 +39,7 @@ const Header = () => {
         }
       } else {
         // Handle route navigation
-        if (url === '/rasa-ai' && !user) {
-          // If trying to access Rasa AI without being logged in
-          handleAuthClick('signIn');
-        } else {
-          navigate(url);
-        }
+        navigate(url);
       }
     }
 
