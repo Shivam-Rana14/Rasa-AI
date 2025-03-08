@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import Button from './Button';
-import { hideAuthForm } from '../utils/auth';
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import Button from "./Button";
+import { hideAuthForm } from "../utils/auth";
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { signin, loading, error } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -13,17 +13,18 @@ const SignIn = () => {
     const result = await signin(email, password);
     if (result.success) {
       // Reset form
-      setEmail('');
-      setPassword('');
+      setEmail("");
+      setPassword("");
       // Hide form and show main content after 1 second
-      setTimeout(() => {
-        hideAuthForm('signIn');
-        // Show all sections
-        const mainSections = document.querySelectorAll('section');
-        mainSections.forEach(section => {
-          section.style.display = 'block';
-        });
-      }, 1000);
+      // setTimeout(() => {
+      //   hideAuthForm("signIn");
+      //   // Show all sections
+      //   const mainSections = document.querySelectorAll("section");
+      //   mainSections.forEach((section) => {
+      //     section.style.display = "block";
+      //   });
+      // }, 20);
+      hideAuthForm("signIn");
     }
   };
 
@@ -64,7 +65,7 @@ const SignIn = () => {
             disabled={loading}
             type="submit"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
       </div>

@@ -20,7 +20,11 @@ const App = () => {
         <Routes>
           <Route
             path="/rasa-ai"
-            element={<RasaAI />}
+            element={
+              <ProtectedRoute>
+                <RasaAI />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/"
