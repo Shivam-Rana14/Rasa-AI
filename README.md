@@ -2,6 +2,8 @@
 
 A modern web application built with React and Node.js, featuring AI-powered capabilities.
 
+Deployed Link : https://rasa-ai.vercel.app/
+
 ## Tech Stack
 
 ### Frontend
