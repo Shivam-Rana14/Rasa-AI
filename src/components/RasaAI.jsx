@@ -52,7 +52,6 @@ const RasaAI = () => {
     }
   };
 
-  // Handle file upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -63,7 +62,6 @@ const RasaAI = () => {
     }
   };
 
-  // Start camera
   const startCamera = async () => {
     try {
       setError(null);
@@ -82,7 +80,6 @@ const RasaAI = () => {
     }
   };
 
-  // Stop camera
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -91,7 +88,6 @@ const RasaAI = () => {
     setShowCamera(false);
   };
 
-  // Capture photo
   const capturePhoto = () => {
     try {
       const video = videoRef.current;
@@ -132,9 +128,9 @@ const RasaAI = () => {
     setIsAnalyzing(true);
     setError(null);
 
-    // Simulate API call SKIN TONE 1-4
+    // Simulate API call for skin tone (1-6)
     setTimeout(() => {
-      const mockSkinTone = Math.floor(Math.random() * 4) + 1;
+      const mockSkinTone = Math.floor(Math.random() * 6) + 1;
       const recommendations = getRecommendations(mockSkinTone);
 
       setAnalysisResult({
@@ -165,12 +161,244 @@ const RasaAI = () => {
     });
   };
 
+  const getBodyTypeSpecificStyles = (bodyType, gender) => {
+    return (
+      styles[gender]?.[bodyType] ||
+      styles[gender]?.athletic ||
+      styles.female.athletic
+    );
+  };
+
+  const getSeasonalAdjustments = (season) => {
+    const adjustments = {
+      spring: {
+        fabrics: ["Light cotton", "Linen blends", "Light denim"],
+        layers: ["Light cardigans", "Denim jackets", "Light blazers"],
+        colors: ["Pastels", "Light neutrals", "Soft brights"],
+      },
+      summer: {
+        fabrics: ["Lightweight cotton", "Linen", "Breathable synthetics"],
+        layers: ["Kimonos", "Light shawls", "Sun protection layers"],
+        colors: ["Bright colors", "Whites", "Light neutrals"],
+      },
+      fall: {
+        fabrics: ["Wool", "Cotton blend", "Leather"],
+        layers: ["Cardigans", "Blazers", "Coats"],
+        colors: ["Earth tones", "Rich jewel tones", "Deep neutrals"],
+      },
+      winter: {
+        fabrics: ["Heavy wool", "Cashmere", "Fleece"],
+        layers: ["Coats", "Parkas", "Thermal layers"],
+        colors: ["Dark neutrals", "Rich jewel tones", "Deep berry shades"],
+      },
+    };
+
+    return adjustments[season] || {};
+  };
+
+  const getOutfitsForOccasion = (occasion, gender, season, stylePreference) => {
+    // Try exact match first
+    const exactMatch =
+      OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[season];
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // Fallback 1: Try any style preference for the same occasion and season
+    const availableStyles = Object.keys(
+      OUTFIT_RECOMMENDATIONS[gender]?.[occasion] || {}
+    );
+    if (availableStyles.length > 0) {
+      const fallbackStyle = availableStyles.includes("classic")
+        ? "classic"
+        : availableStyles[0];
+      const fallbackRecommendations =
+        OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[fallbackStyle]?.[season];
+      if (fallbackRecommendations) {
+        return fallbackRecommendations;
+      }
+    }
+
+    // Fallback 2: Try any season for the same occasion and style preference
+    const availableSeasons = Object.keys(
+      OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference] || {}
+    );
+    if (availableSeasons.length > 0) {
+      const fallbackSeason = availableSeasons[0];
+      const fallbackRecommendations =
+        OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[
+          fallbackSeason
+        ];
+      if (fallbackRecommendations) {
+        return fallbackRecommendations;
+      }
+    }
+
+    // Fallback 3: Default recommendations for the occasion and gender
+    const defaultOutfits = {
+      male: {
+        casual: [
+          "Classic t-shirt with jeans",
+          "Polo shirt with chinos",
+          "Button-down shirt with dark pants",
+        ],
+        formal: [
+          "Navy suit with white shirt",
+          "Charcoal suit with light blue shirt",
+          "Black suit with crisp white shirt",
+        ],
+        business: [
+          "Navy blazer with gray trousers",
+          "Gray suit with white shirt",
+          "Charcoal suit with light shirt",
+        ],
+        party: [
+          "Dark jeans with dress shirt",
+          "Blazer with dark jeans",
+          "Dress pants with fitted shirt",
+        ],
+        sports: [
+          "Athletic shirt with track pants",
+          "Performance polo with shorts",
+          "Training jacket with matching pants",
+        ],
+        wedding: [
+          "Classic black suit",
+          "Navy suit with tie",
+          "Gray suit with formal shirt",
+        ],
+      },
+      female: {
+        casual: ["Jeans with blouse", "Casual dress", "Sweater with leggings"],
+        formal: ["Little black dress", "Formal pantsuit", "Evening gown"],
+        business: [
+          "Blazer with pencil skirt",
+          "Professional pantsuit",
+          "Blouse with tailored pants",
+        ],
+        party: ["Cocktail dress", "Stylish jumpsuit", "Statement dress"],
+        cocktail: [
+          "Knee-length cocktail dress",
+          "Elegant jumpsuit",
+          "Chic evening dress",
+        ],
+        wedding: ["Formal gown", "Elegant dress", "Sophisticated evening wear"],
+        brunch: ["Sundress", "Blouse with skirt", "Casual dress"],
+      },
+    };
+
+    return (
+      defaultOutfits[gender]?.[occasion] || [
+        "Classic pieces suitable for any occasion",
+      ]
+    );
+  };
+
+  const getAccessories = (stylePreference, occasion, gender, season) => {
+    // Try exact match first
+    const exactMatch =
+      ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[
+        season
+      ];
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // Fallback 1: Try any style preference for the same occasion and season
+    const availableStyles = Object.keys(
+      ACCESSORY_RECOMMENDATIONS[gender]?.[occasion] || {}
+    );
+    if (availableStyles.length > 0) {
+      const fallbackStyle = availableStyles.includes("classic")
+        ? "classic"
+        : availableStyles[0];
+      const fallbackRecommendations =
+        ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[fallbackStyle]?.[
+          season
+        ];
+      if (fallbackRecommendations) {
+        return fallbackRecommendations;
+      }
+    }
+
+    // Fallback 2: Try any season for the same occasion and style preference
+    const availableSeasons = Object.keys(
+      ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference] || {}
+    );
+    if (availableSeasons.length > 0) {
+      const fallbackSeason = availableSeasons[0];
+      const fallbackRecommendations =
+        ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[
+          fallbackSeason
+        ];
+      if (fallbackRecommendations) {
+        return fallbackRecommendations;
+      }
+    }
+
+    // Fallback 3: Default accessories for the occasion and gender
+    const defaultAccessories = {
+      male: {
+        casual: ["Classic watch", "Leather belt", "Sunglasses"],
+        formal: ["Dress watch", "Tie", "Cufflinks"],
+        business: ["Professional watch", "Leather belt", "Tie clip"],
+        party: ["Fashion watch", "Statement belt", "Pocket square"],
+        sports: ["Sports watch", "Athletic socks", "Headband"],
+        wedding: ["Formal watch", "Silk tie", "Dress shoes"],
+      },
+      female: {
+        casual: ["Simple necklace", "Stud earrings", "Classic watch"],
+        formal: ["Statement necklace", "Elegant earrings", "Evening clutch"],
+        business: ["Pearl earrings", "Delicate necklace", "Professional watch"],
+        party: ["Statement jewelry", "Evening bag", "Fashion heels"],
+        cocktail: ["Crystal earrings", "Evening clutch", "Statement bracelet"],
+        wedding: ["Fine jewelry set", "Evening bag", "Hair accessories"],
+        brunch: ["Delicate jewelry", "Sunglasses", "Fashion watch"],
+      },
+    };
+
+    return (
+      defaultAccessories[gender]?.[occasion] || [
+        "Classic accessories that complement any outfit",
+      ]
+    );
+  };
+
+  const getRecommendations = (skinTone) => {
+    const outfits = getOutfitsForOccasion(
+      preferences.occasion,
+      preferences.gender,
+      preferences.season,
+      preferences.stylePreference
+    );
+    const accessories = getAccessories(
+      preferences.stylePreference,
+      preferences.occasion,
+      preferences.gender,
+      preferences.season
+    );
+
+    return {
+      colorPalette: SKIN_TONE_PALETTES[skinTone] || SKIN_TONE_PALETTES[1],
+      outfits: Array.isArray(outfits)
+        ? outfits
+        : ["Classic pieces suitable for any occasion"],
+      accessories: Array.isArray(accessories)
+        ? accessories
+        : ["Classic accessories that complement any outfit"],
+      seasonal: getSeasonalAdjustments(preferences.season),
+      bodyTypeRecommendations: getBodyTypeSpecificStyles(
+        preferences.bodyType,
+        preferences.gender
+      ),
+    };
+  };
+
   const renderPreferencesForm = () => (
     <div className="w-full max-w-[640px] p-6 rounded-xl bg-n-6">
       <h3 className="text-2xl font-bold text-n-1 mb-6">
         Tell us about yourself
       </h3>
-
       <div className="space-y-6">
         <div>
           <label className="block text-n-3 mb-2">Gender</label>
@@ -178,17 +406,7 @@ const RasaAI = () => {
             {["male", "female"].map((gender) => (
               <button
                 key={gender}
-                onClick={() => {
-                  handlePreferenceChange("gender", gender);
-                  // Reset other preferences when gender changes
-                  setPreferences((prev) => ({
-                    ...prev,
-                    gender,
-                    occasion: "",
-                    bodyType: "",
-                    stylePreference: "",
-                  }));
-                }}
+                onClick={() => handlePreferenceChange("gender", gender)}
                 className={`px-4 py-2 rounded-lg text-sm ${
                   preferences.gender === gender
                     ? "bg-color-1 text-n-1"
@@ -286,58 +504,26 @@ const RasaAI = () => {
         <div>
           <label className="block text-n-3 mb-2">Measurements</label>
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col">
-              <label className="text-sm text-n-3 mb-1">Height (inches)</label>
-              <input
-                type="number"
-                value={preferences.measurements.height}
-                onChange={(e) =>
-                  handlePreferenceChange("measurements.height", e.target.value)
-                }
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
-                min="0"
-                step="1"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-sm text-n-3 mb-1">Bust (inches)</label>
-              <input
-                type="number"
-                value={preferences.measurements.bust}
-                onChange={(e) =>
-                  handlePreferenceChange("measurements.bust", e.target.value)
-                }
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
-                min="0"
-                step="1"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-sm text-n-3 mb-1">Waist (inches)</label>
-              <input
-                type="number"
-                value={preferences.measurements.waist}
-                onChange={(e) =>
-                  handlePreferenceChange("measurements.waist", e.target.value)
-                }
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
-                min="0"
-                step="1"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-sm text-n-3 mb-1">Hips (inches)</label>
-              <input
-                type="number"
-                value={preferences.measurements.hips}
-                onChange={(e) =>
-                  handlePreferenceChange("measurements.hips", e.target.value)
-                }
-                className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
-                min="0"
-                step="1"
-              />
-            </div>
+            {Object.entries(preferences.measurements).map(([key, value]) => (
+              <div key={key} className="flex flex-col">
+                <label className="text-sm text-n-3 mb-1">
+                  {key.charAt(0).toUpperCase() + key.slice(1)} (inches)
+                </label>
+                <input
+                  type="number"
+                  value={value}
+                  onChange={(e) =>
+                    handlePreferenceChange(
+                      `measurements.${key}`,
+                      e.target.value
+                    )
+                  }
+                  className="px-4 py-2 rounded-lg text-sm bg-n-5 text-n-1 focus:outline-none focus:ring-2 focus:ring-color-1"
+                  min="0"
+                  step="1"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -534,219 +720,6 @@ const RasaAI = () => {
       )}
     </div>
   );
-
-  const getBodyTypeSpecificStyles = (bodyType, gender) => {
-    return (
-      styles[gender]?.[bodyType] ||
-      styles[gender]?.athletic ||
-      styles.female.athletic
-    );
-  };
-
-  const getSeasonalAdjustments = (season) => {
-    const adjustments = {
-      spring: {
-        fabrics: ["Light cotton", "Linen blends", "Light denim"],
-        layers: ["Light cardigans", "Denim jackets", "Light blazers"],
-        colors: ["Pastels", "Light neutrals", "Soft brights"],
-      },
-      summer: {
-        fabrics: ["Lightweight cotton", "Linen", "Breathable synthetics"],
-        layers: ["Kimonos", "Light shawls", "Sun protection layers"],
-        colors: ["Bright colors", "Whites", "Light neutrals"],
-      },
-      fall: {
-        fabrics: ["Wool", "Cotton blend", "Leather"],
-        layers: ["Cardigans", "Blazers", "Coats"],
-        colors: ["Earth tones", "Rich jewel tones", "Deep neutrals"],
-      },
-      winter: {
-        fabrics: ["Heavy wool", "Cashmere", "Fleece"],
-        layers: ["Coats", "Parkas", "Thermal layers"],
-        colors: ["Dark neutrals", "Rich jewel tones", "Deep berry shades"],
-      },
-    };
-
-    return adjustments[season] || {};
-  };
-
-  const getRecommendations = (skinTone) => {
-    const outfits = getOutfitsForOccasion(
-      preferences.occasion,
-      skinTone,
-      preferences.gender,
-      preferences.season,
-      preferences.stylePreference
-    );
-    const accessories = getAccessories(
-      preferences.stylePreference,
-      preferences.occasion,
-      preferences.gender,
-      preferences.season
-    );
-
-    // Enhanced recommendations considering more factors
-    const baseRecommendation = {
-      colorPalette: getColorPaletteForSkinTone(skinTone),
-      outfits: Array.isArray(outfits)
-        ? outfits
-        : ["Classic pieces suitable for any occasion"],
-      accessories: Array.isArray(accessories)
-        ? accessories
-        : ["Classic accessories that complement any outfit"],
-      seasonal: getSeasonalAdjustments(preferences.season),
-      bodyTypeRecommendations: getBodyTypeSpecificStyles(
-        preferences.bodyType,
-        preferences.gender
-      ),
-    };
-
-    return baseRecommendation;
-  };
-
-  const getColorPaletteForSkinTone = (skinTone) => {
-    return SKIN_TONE_PALETTES[skinTone] || SKIN_TONE_PALETTES[1];
-  };
-
-  const getOutfitsForOccasion = (occasion, gender, season, stylePreference) => {
-    // First try exact match
-    const exactMatch =
-      OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[season];
-    if (exactMatch) {
-      return exactMatch;
-    }
-
-    // If no exact match, try to find a similar style
-    const availableStyles = Object.keys(
-      OUTFIT_RECOMMENDATIONS[gender]?.[occasion] || {}
-    );
-    if (availableStyles.length > 0) {
-      // Try classic style first if available, otherwise use the first available style
-      const fallbackStyle = availableStyles.includes("classic")
-        ? "classic"
-        : availableStyles[0];
-      const fallbackRecommendations =
-        OUTFIT_RECOMMENDATIONS[gender]?.[occasion]?.[fallbackStyle]?.[season];
-      if (fallbackRecommendations) {
-        return fallbackRecommendations;
-      }
-    }
-
-    // If still no match, try to find any recommendations for this gender and occasion
-    const defaultOutfits = {
-      male: {
-        casual: [
-          "Classic t-shirt with jeans",
-          "Polo shirt with chinos",
-          "Button-down shirt with dark pants",
-        ],
-        formal: [
-          "Navy suit with white shirt",
-          "Charcoal suit with light blue shirt",
-          "Black suit with crisp white shirt",
-        ],
-        business: [
-          "Navy blazer with gray trousers",
-          "Gray suit with white shirt",
-          "Charcoal suit with light shirt",
-        ],
-        party: [
-          "Dark jeans with dress shirt",
-          "Blazer with dark jeans",
-          "Dress pants with fitted shirt",
-        ],
-        sports: [
-          "Athletic shirt with track pants",
-          "Performance polo with shorts",
-          "Training jacket with matching pants",
-        ],
-        wedding: [
-          "Classic black suit",
-          "Navy suit with tie",
-          "Gray suit with formal shirt",
-        ],
-      },
-      female: {
-        casual: ["Jeans with blouse", "Casual dress", "Sweater with leggings"],
-        formal: ["Little black dress", "Formal pantsuit", "Evening gown"],
-        business: [
-          "Blazer with pencil skirt",
-          "Professional pantsuit",
-          "Blouse with tailored pants",
-        ],
-        party: ["Cocktail dress", "Stylish jumpsuit", "Statement dress"],
-        cocktail: [
-          "Knee-length cocktail dress",
-          "Elegant jumpsuit",
-          "Chic evening dress",
-        ],
-        wedding: ["Formal gown", "Elegant dress", "Sophisticated evening wear"],
-        brunch: ["Sundress", "Blouse with skirt", "Casual dress"],
-      },
-    };
-
-    return (
-      defaultOutfits[gender]?.[occasion] || [
-        "Classic pieces suitable for any occasion",
-      ]
-    );
-  };
-
-  const getAccessories = (stylePreference, occasion, gender, season) => {
-    // First try exact match
-    const exactMatch =
-      ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[stylePreference]?.[
-        season
-      ];
-    if (exactMatch) {
-      return exactMatch;
-    }
-
-    // If no exact match, try to find a similar style
-    const availableStyles = Object.keys(
-      ACCESSORY_RECOMMENDATIONS[gender]?.[occasion] || {}
-    );
-    if (availableStyles.length > 0) {
-      // Try classic style first if available, otherwise use the first available style
-      const fallbackStyle = availableStyles.includes("classic")
-        ? "classic"
-        : availableStyles[0];
-      const fallbackRecommendations =
-        ACCESSORY_RECOMMENDATIONS[gender]?.[occasion]?.[fallbackStyle]?.[
-          season
-        ];
-      if (fallbackRecommendations) {
-        return fallbackRecommendations;
-      }
-    }
-
-    // If still no match, provide default accessories based on gender and occasion
-    const defaultAccessories = {
-      male: {
-        casual: ["Classic watch", "Leather belt", "Sunglasses"],
-        formal: ["Dress watch", "Tie", "Cufflinks"],
-        business: ["Professional watch", "Leather belt", "Tie clip"],
-        party: ["Fashion watch", "Statement belt", "Pocket square"],
-        sports: ["Sports watch", "Athletic socks", "Headband"],
-        wedding: ["Formal watch", "Silk tie", "Dress shoes"],
-      },
-      female: {
-        casual: ["Simple necklace", "Stud earrings", "Classic watch"],
-        formal: ["Statement necklace", "Elegant earrings", "Evening clutch"],
-        business: ["Pearl earrings", "Delicate necklace", "Professional watch"],
-        party: ["Statement jewelry", "Evening bag", "Fashion heels"],
-        cocktail: ["Crystal earrings", "Evening clutch", "Statement bracelet"],
-        wedding: ["Fine jewelry set", "Evening bag", "Hair accessories"],
-        brunch: ["Delicate jewelry", "Sunglasses", "Fashion watch"],
-      },
-    };
-
-    return (
-      defaultAccessories[gender]?.[occasion] || [
-        "Classic accessories that complement any outfit",
-      ]
-    );
-  };
 
   return (
     <Section className="relative overflow-hidden">
