@@ -8,8 +8,10 @@ import { useRef } from "react";
 import Generating from "./Generating";
 import Notification from "./Notification";
 import CompanyLogos from "./CompanyLogos";
+import { useAuth } from "../context/AuthContext";
 
 const Hero = () => {
+  const {user} = useAuth();
   const parallaxRef = useRef(null);
 
   return (
@@ -39,9 +41,12 @@ const Hero = () => {
           <p className="body-1 max-w-3xl mx-auto mb-6 text-n-2 lg:mb-8">
             Unleash Your Style Potential with RASA.ai - Where AI Meets Fashion!
           </p>
-          <Button href="/rasa-ai" white>
+          {user ? <Button href="/rasa-ai" white>
             Get started
-          </Button>
+          </Button> : <p className="body-1 max-w-3xl mx-auto mb-6 text-n-2 lg:mb-8">
+          Login To Get Started
+          </p>}
+          
         </div>
         <div className="relative max-w-[23rem] mx-auto md:max-w-5xl xl:mb-24">
           <div className="relative z-1 p-0.5 rounded-2xl bg-conic-gradient">

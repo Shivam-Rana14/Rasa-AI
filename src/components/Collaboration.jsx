@@ -1,6 +1,5 @@
 import { rasaSymbol, check } from "../assets";
 import { collabApps, collabContent } from "../constants";
-import Button from "./Button";
 import Section from "./Section";
 import { LeftCurve, RightCurve } from "./design/Collaboration";
 
@@ -24,8 +23,6 @@ const Collaboration = () => {
               </li>
             ))}
           </ul>
-
-          <Button href="/rasa-ai">Try it now</Button>
         </div>
 
         <div className="lg:ml-auto xl:w-[38rem] mt-4">

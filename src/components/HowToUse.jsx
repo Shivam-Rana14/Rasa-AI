@@ -4,7 +4,7 @@ import Section from "./Section";
 import { GradientLight } from "./design/Benefits";
 import ClipPath from "../assets/svg/ClipPath";
 import Arrow from "../assets/svg/Arrow";
-import Button from "./Button";
+
 const HowToUse = () => {
   return (
     <Section id="how-to-use">
@@ -63,7 +63,7 @@ const HowToUse = () => {
             </div>
           ))}
 
-          <Button href="/rasa-ai">Try it now</Button>
+          
         </div>
       </div>
     </Section>
