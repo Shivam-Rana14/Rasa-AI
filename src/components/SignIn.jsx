@@ -15,15 +15,6 @@ const SignIn = () => {
       // Reset form
       setEmail("");
       setPassword("");
-      // Hide form and show main content after 1 second
-      // setTimeout(() => {
-      //   hideAuthForm("signIn");
-      //   // Show all sections
-      //   const mainSections = document.querySelectorAll("section");
-      //   mainSections.forEach((section) => {
-      //     section.style.display = "block";
-      //   });
-      // }, 20);
       hideAuthForm("signIn");
     }
   };
