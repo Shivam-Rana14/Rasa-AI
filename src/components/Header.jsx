@@ -52,9 +52,9 @@ const Header = () => {
     // Scroll to the auth form
     let targetElement = null;
     if (formId === "signUp") {
-      targetElement = document.getElementById("new-account-form");
+      targetElement = document.getElementById("signUp-form");
     } else if (formId === "signIn") {
-      targetElement = document.getElementById("auth-form-container");
+      targetElement = document.getElementById("signIn-form");
     }
 
     if (targetElement) {
