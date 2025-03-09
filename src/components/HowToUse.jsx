@@ -7,7 +7,7 @@ import Arrow from "../assets/svg/Arrow";
 
 const HowToUse = () => {
   return (
-    <Section id="how-to-use">
+    <Section id="how-to-use" crosses>
       <div className="container relative z-2">
         <Heading
           className="md:max-w-md lg:max-w-2xl"
