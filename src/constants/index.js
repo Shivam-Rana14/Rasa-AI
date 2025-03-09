@@ -53,8 +53,6 @@ export const navigation = [
     title: "Rasa AI",
     url: "/rasa-ai",
   },
-
-  
 ];
 
 export const heroIcons = [homeSmile, file02, searchMd, plusSquare];

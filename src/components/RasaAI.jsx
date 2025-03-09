@@ -570,17 +570,6 @@ const RasaAI = () => {
     return adjustments[season] || {};
   };
 
-  const getFabricRecommendations = (season) => {
-    const seasonalFabrics = {
-      spring: ["Cotton", "Light wool", "Silk blends"],
-      summer: ["Linen", "Light cotton", "Bamboo"],
-      fall: ["Wool", "Cotton blend", "Leather"],
-      winter: ["Heavy wool", "Cashmere", "Fleece"],
-    };
-
-    return seasonalFabrics[season] || [];
-  };
-
   const getRecommendations = (skinTone) => {
     const outfits = getOutfitsForOccasion(
       preferences.occasion,
@@ -757,18 +746,6 @@ const RasaAI = () => {
         "Classic accessories that complement any outfit",
       ]
     );
-  };
-
-  const getSustainableAlternatives = () => {
-    return [
-      "Organic Cotton Pieces",
-      "Recycled Polyester Items",
-      "Bamboo Fabric Clothing",
-      "Hemp-based Materials",
-      "Second-hand Designer Items",
-      "Locally Made Pieces",
-      "Zero-waste Designs",
-    ];
   };
 
   return (

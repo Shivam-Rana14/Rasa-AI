@@ -24,7 +24,7 @@ const SignIn = () => {
       <div className="w-full max-w-md rounded-2xl bg-n-7 p-8">
         <h2 className="mb-6 text-3xl font-bold text-n-1">Sign In</h2>
         {error && <p className="mb-4 text-red-500">{error}</p>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} id="auth-form-container">
           <div className="mb-4">
             <label className="mb-2 block text-n-1" htmlFor="signin-email">
               Email

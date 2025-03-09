@@ -12,9 +12,9 @@ import { useAuth } from "../context/AuthContext";
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [openNavigation, setOpenNavigation] = useState(false);
   const { user, signout } = useAuth();
 
+  const [openNavigation, setOpenNavigation] = useState(false);
   const toggleNavigation = () => {
     if (openNavigation) {
       setOpenNavigation(false);
@@ -31,10 +31,10 @@ const Header = () => {
     }
 
     if (url) {
-      if (url.startsWith('#')) {
+      if (url.startsWith("#")) {
         const element = document.querySelector(url);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: "smooth" });
         }
       } else {
         navigate(url);
@@ -49,6 +49,29 @@ const Header = () => {
 
   const handleAuthClick = (formId) => {
     showAuthForm(formId);
+    // Scroll to the auth form
+    let targetElement = null;
+    if (formId === "signUp") {
+      targetElement = document.getElementById("new-account-form");
+    } else if (formId === "signIn") {
+      targetElement = document.getElementById("auth-form-container");
+    }
+
+    if (targetElement) {
+      // Calculate the offset to account for the fixed header
+      const headerHeight =
+        document.querySelector("div.fixed")?.offsetHeight || 0;
+      const targetPosition =
+        targetElement.getBoundingClientRect().top +
+        window.scrollY -
+        headerHeight;
+
+      window.scrollTo({
+        top: targetPosition,
+        behavior: "smooth",
+      });
+    }
+
     if (openNavigation) {
       enablePageScroll();
       setOpenNavigation(false);
@@ -57,9 +80,9 @@ const Header = () => {
 
   const handleSignOut = () => {
     signout();
-    const mainSections = document.querySelectorAll('section');
-    mainSections.forEach(section => {
-      section.style.display = 'block';
+    const mainSections = document.querySelectorAll("section");
+    mainSections.forEach((section) => {
+      section.style.display = "block";
     });
   };
 
@@ -70,7 +93,11 @@ const Header = () => {
       }`}
     >
       <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
-        <a className="block w-[12rem] xl:mr-8" href="#hero" onClick={(e) => handleClick(e, '#hero')}>
+        <a
+          className="block w-[12rem] xl:mr-8"
+          href="#hero"
+          onClick={(e) => handleClick(e, "#hero")}
+        >
           <img src={rasa} width={190} height={40} alt="Rasa.ai" />
         </a>
         <nav
@@ -94,36 +121,60 @@ const Header = () => {
                 {item.title}
               </a>
             ))}
+            <div className="flex flex-col items-center lg:hidden">
+              {user ? (
+                <>
+                  <span className="text-n-1 whitespace-nowrap">
+                    Welcome, {user.name}
+                  </span>
+                  <Button
+                    className="mt-2 whitespace-nowrap"
+                    onClick={handleSignOut}
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <Button
+                    className="whitespace-nowrap"
+                    onClick={() => handleAuthClick("signUp")}
+                  >
+                    New Account
+                  </Button>
+                  <Button
+                    className="mt-2 whitespace-nowrap"
+                    onClick={() => handleAuthClick("signIn")}
+                  >
+                    Sign In
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
           <HamburgerMenu />
         </nav>
         <div className="flex items-center ml-auto">
           {user ? (
             <>
-              <span className="hidden lg:block mr-4 text-n-1">
+              <span className="lg:block mr-4 text-n-1 hidden whitespace-nowrap">
                 Welcome, {user.name}
               </span>
               <Button className="hidden lg:flex" onClick={handleSignOut}>
-                Sign Out
-              </Button>
-              <Button
-                className="lg:hidden"
-                px="px-3"
-                onClick={handleSignOut}
-              >
                 Sign Out
               </Button>
             </>
           ) : (
             <>
               <Button
-                className="text-n-1/50 transition-colors hover:text-n-1 mr-2 lg:mr-4"
-                onClick={() => handleAuthClick('signUp')}
+                className="text-n-1/50 transition-colors hover:text-n-1 mr-2 lg:mr-4 hidden whitespace-nowrap lg:block"
+                onClick={() => handleAuthClick("signUp")}
               >
                 New Account
               </Button>
               <Button
-                onClick={() => handleAuthClick('signIn')}
+                className="hidden whitespace-nowrap lg:block"
+                onClick={() => handleAuthClick("signIn")}
               >
                 Sign In
               </Button>
