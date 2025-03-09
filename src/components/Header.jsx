@@ -32,13 +32,11 @@ const Header = () => {
 
     if (url) {
       if (url.startsWith('#')) {
-        // Handle anchor links
         const element = document.querySelector(url);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
       } else {
-        // Handle route navigation
         navigate(url);
       }
     }
@@ -51,7 +49,6 @@ const Header = () => {
 
   const handleAuthClick = (formId) => {
     showAuthForm(formId);
-    // Close navigation if it's open
     if (openNavigation) {
       enablePageScroll();
       setOpenNavigation(false);
@@ -60,7 +57,6 @@ const Header = () => {
 
   const handleSignOut = () => {
     signout();
-    // Show all sections after signing out
     const mainSections = document.querySelectorAll('section');
     mainSections.forEach(section => {
       section.style.display = 'block';
@@ -79,7 +75,7 @@ const Header = () => {
         </a>
         <nav
           className={`${openNavigation ? `flex` : `hidden`}
-           fixed top-[5rem] left-0 right-0 bottom-0 bg-n-8 lg:static lg:flex lg:mx-auto lg:bg-transparent`}
+            fixed top-[5rem] left-0 right-0 bottom-0 bg-n-8 lg:static lg:flex lg:mx-auto lg:bg-transparent`}
         >
           <div className="relative z-2 flex flex-col items-center justify-center m-auto lg:flex-row">
             {navigation.map((item) => (
@@ -101,38 +97,46 @@ const Header = () => {
           </div>
           <HamburgerMenu />
         </nav>
-        {user ? (
-          <>
-            <span className="hidden lg:block mr-8 text-n-1">
-              Welcome, {user.name}
-            </span>
-            <Button className="hidden lg:flex" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              className="hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block"
-              onClick={() => handleAuthClick('signUp')}
-            >
-              New Account
-            </Button>
-            <Button
-              className="hidden lg:flex"
-              onClick={() => handleAuthClick('signIn')}
-            >
-              Sign In
-            </Button>
-          </>
-        )}
-        <Button
-          className="ml-auto lg:hidden"
-          px="px-3"
-          onClick={toggleNavigation}
-        >
-          <MenuSvg openNavigation={openNavigation} />
-        </Button>
+        <div className="flex items-center ml-auto">
+          {user ? (
+            <>
+              <span className="hidden lg:block mr-4 text-n-1">
+                Welcome, {user.name}
+              </span>
+              <Button className="hidden lg:flex" onClick={handleSignOut}>
+                Sign Out
+              </Button>
+              <Button
+                className="lg:hidden"
+                px="px-3"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                className="text-n-1/50 transition-colors hover:text-n-1 mr-2 lg:mr-4"
+                onClick={() => handleAuthClick('signUp')}
+              >
+                New Account
+              </Button>
+              <Button
+                onClick={() => handleAuthClick('signIn')}
+              >
+                Sign In
+              </Button>
+            </>
+          )}
+          <Button
+            className="ml-4 lg:hidden"
+            px="px-3"
+            onClick={toggleNavigation}
+          >
+            <MenuSvg openNavigation={openNavigation} />
+          </Button>
+        </div>
       </div>
     </div>
   );
