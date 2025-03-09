@@ -101,13 +101,13 @@ export const STYLE_PREFERENCES = {
 export const SEASONS = ["spring", "summer", "fall", "winter"];
 
 export const collabText0 =
-  "With our smart AI algorithm , it's the perfect solution for finding outfits tailored just for you.";
+  "With our smart AI algorithm, it's the perfect solution for finding outfits tailored just for you.";
 
 export const collabText1 =
   "Rasa AI model is equipped to serve all your fashion needs.";
 
 export const collabText2 =
-  "No matter what the ocassion, we are here to help you choose the best outfit..";
+  "No matter what the occasion, we are here to help you choose the best outfit.";
 
 export const collabContent = [
   {
@@ -204,7 +204,7 @@ export const pricing = [
     description: "Advanced AI chatbot, priority support, analytics dashboard",
     price: "9.99",
     features: [
-      "An advanced AI model that can analyse complex complexions.",
+      "An advanced AI model that can analyze complex complexions.",
       "An analytics dashboard to track your evolving fashion interest.",
       "Priority support.",
       "Deliver more accurate color palette.",
@@ -248,7 +248,7 @@ export const benefits = [
   {
     id: "3",
     title: "Fast responding",
-    text: "Lets users quickly find outfits that best suits their needs.",
+    text: "Lets users quickly find outfits that best suit their needs.",
     backgroundUrl: "./src/assets/benefits/card-4.svg",
     iconUrl: benefitIcon4,
     imageUrl: benefitImage2,
@@ -407,6 +407,11 @@ export const styles = {
         "Classic blazers",
       ],
     },
+    muscular: {
+      tops: ["Fitted henleys", "Slim-fit polos", "Structured button-ups"],
+      bottoms: ["Tapered joggers", "Fitted chinos", "Slim-fit jeans"],
+      outerwear: ["Bomber jackets", "Fitted blazers", "Lightweight parkas"],
+    },
   },
   female: {
     hourglass: {
@@ -422,6 +427,16 @@ export const styles = {
         "Empire waist dresses",
         "A-line silhouettes",
       ],
+    },
+    rectangle: {
+      tops: ["Peplum tops", "Ruffled blouses", "Layered looks"],
+      bottoms: ["High-waisted pants", "A-line skirts", "Flared jeans"],
+      dresses: ["Belted dresses", "Fit and flare dresses", "Wrap dresses"],
+    },
+    apple: {
+      tops: ["V-neck tops", "Empire waist blouses", "Structured jackets"],
+      bottoms: ["Straight-leg pants", "A-line skirts", "Dark wash jeans"],
+      dresses: ["Empire waist dresses", "A-line dresses", "Wrap dresses"],
     },
     athletic: {
       tops: ["Ruffled blouses", "Cowl necks", "Layered tops"],
@@ -498,6 +513,28 @@ export const OUTFIT_RECOMMENDATIONS = {
           "Thermal joggers with performance layers",
           "Insulated track suit",
           "Fleece pants with thermal top",
+        ],
+      },
+      muscular: {
+        spring: [
+          "Fitted henley with slim jeans",
+          "Slim-fit polo with chinos",
+          "Structured button-up with tapered trousers",
+        ],
+        summer: [
+          "Muscle tee with joggers",
+          "Fitted polo with shorts",
+          "Slim-fit tank with chinos",
+        ],
+        fall: [
+          "Fitted sweater with jeans",
+          "Structured shirt with trousers",
+          "Layered look with fitted outerwear",
+        ],
+        winter: [
+          "Fitted turtleneck with wool pants",
+          "Structured coat with slim jeans",
+          "Layered knits with tapered trousers",
         ],
       },
     },
@@ -660,6 +697,74 @@ export const OUTFIT_RECOMMENDATIONS = {
           "Velvet maxi dress",
           "Layered bohemian pieces",
           "Embroidered sweater with wide-leg pants",
+        ],
+      },
+    },
+    brunch: {
+      minimal: {
+        spring: [
+          "Light sundress with sandals",
+          "White jeans with pastel top",
+          "Casual midi dress",
+        ],
+        summer: [
+          "Linen dress with espadrilles",
+          "Cotton skirt with tank top",
+          "Light jumpsuit",
+        ],
+        fall: [
+          "Knit dress with ankle boots",
+          "Sweater with midi skirt",
+          "Jeans with cozy sweater",
+        ],
+        winter: [
+          "Turtleneck with tailored pants",
+          "Sweater dress with tights",
+          "Corduroy skirt with knit top",
+        ],
+      },
+      romantic: {
+        spring: [
+          "Floral dress with wedges",
+          "Ruffled blouse with skirt",
+          "Lace top with jeans",
+        ],
+        summer: [
+          "Flowy dress with sandals",
+          "Off-shoulder top with shorts",
+          "Embroidered dress",
+        ],
+        fall: [
+          "Velvet dress with boots",
+          "Knit sweater with pleated skirt",
+          "Romantic blouse with jeans",
+        ],
+        winter: [
+          "Long-sleeve dress with tights",
+          "Sweater with midi skirt",
+          "Velvet top with pants",
+        ],
+      },
+      bohemian: {
+        spring: [
+          "Maxi dress with sandals",
+          "Embroidered top with jeans",
+          "Flowy skirt with tank",
+        ],
+        summer: [
+          "Printed dress with espadrilles",
+          "Crochet top with shorts",
+          "Boho jumpsuit",
+        ],
+        fall: [
+          "Layered dress with boots",
+          "Fringe jacket with jeans",
+          "Embroidered skirt with sweater",
+        ],
+        winter: [
+          "Velvet dress with boots",
+          "Boho sweater with skirt",
+          "Layered maxi dress",
         ],
       },
     },
