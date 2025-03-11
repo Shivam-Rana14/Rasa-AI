@@ -11,6 +11,7 @@ import RasaAI from "./components/RasaAI";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { Routes, Route } from "react-router-dom";
+import RasaAiContextProvider from "./context/RasaAiContext";
 
 const App = () => {
   return (
@@ -22,7 +23,9 @@ const App = () => {
             path="/rasa-ai"
             element={
               <ProtectedRoute>
-                <RasaAI />
+                <RasaAiContextProvider>
+                  <RasaAI />
+                </RasaAiContextProvider>
               </ProtectedRoute>
             }
           />
