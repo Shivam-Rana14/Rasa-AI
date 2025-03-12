@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Initial loading state
   const [error, setError] = useState(null);
 
   // Check for existing session on mount
@@ -14,13 +14,14 @@ export const AuthProvider = ({ children }) => {
     if (token && savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    setLoading(false);
+    setLoading(false); // Set loading to false after checking session
   }, []);
 
   const signup = async (name, email, password) => {
+    setLoading(true); // Set loading to true at the start
+    setError(null); // Clear any previous errors
+
     try {
-      setLoading(true);
-      setError(null);
       const response = await fetch(
         "https://rasa-ai.onrender.com/api/auth/signup",
         {
@@ -40,17 +41,18 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, message: data.message };
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Set the error state
       return { success: false, message: err.message };
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading to false after the operation
     }
   };
 
   const signin = async (email, password) => {
+    setLoading(true); // Set loading to true at the start
+    setError(null); // Clear any previous errors
+
     try {
-      setLoading(true);
-      setError(null);
       const response = await fetch(
         "https://rasa-ai.onrender.com/api/auth/signin",
         {
@@ -73,10 +75,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(data.user));
       return { success: true };
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Set the error state
       return { success: false, message: err.message };
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading to false after the operation
     }
   };
 
@@ -88,9 +90,9 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, error, signup, signin, signout }}
+      value={{ user, loading, error, setError, signup, signin, signout }}
     >
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
