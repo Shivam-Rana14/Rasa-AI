@@ -40,7 +40,7 @@ const Benefits = () => {
                 </div>
               </div>
 
-              {item.light && <GradientLight />}
+              {<GradientLight />}
 
               <div
                 className="absolute inset-0.5 bg-n-8"

@@ -4,6 +4,8 @@ import ClipPath from "../assets/svg/ClipPath";
 import Button from "./Button";
 import { GradientLight } from "./design/Benefits";
 import { pricing } from "../constants";
+import { LeftLine, RightLine } from "./design/Pricing";
+import { BottomLine } from "./design/Hero";
 
 const Pricing = () => {
   return (
@@ -16,6 +18,7 @@ const Pricing = () => {
         />
 
         <div className="flex flex-wrap gap-10 mb-10 justify-center">
+          <LeftLine />
           {pricing.map((plan) => (
             <div
               className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] md:max-w-[24rem]"
@@ -31,7 +34,10 @@ const Pricing = () => {
                 </div>
                 <ul className="space-y-4 mb-6">
                   {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-n-3 body-2">
+                    <li
+                      key={index}
+                      className="flex items-center text-n-3 body-2"
+                    >
                       <svg
                         className="w-6 h-6 mr-2 text-color-1"
                         fill="none"
@@ -56,19 +62,17 @@ const Pricing = () => {
                 </div>
               </div>
 
-              {plan.id === "1" && <GradientLight />}
+              {plan.id && <GradientLight />}
 
               <div
                 className="absolute inset-0.5 bg-n-8"
                 style={{ clipPath: "url(#benefits)" }}
               >
-                <div className="absolute inset-0 opacity-0 transition-opacity hover:opacity-10">
-                </div>
+                <div className="absolute inset-0 opacity-0 transition-opacity hover:opacity-10"></div>
               </div>
-
-              <ClipPath />
             </div>
           ))}
+          <RightLine />
         </div>
       </div>
     </Section>

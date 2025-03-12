@@ -50,7 +50,7 @@ const HowToUse = () => {
                 </div>
               </div>
 
-              {item.light && <GradientLight />}
+              {<GradientLight />}
 
               <div
                 className="absolute inset-0.5 bg-n-8"
@@ -62,8 +62,6 @@ const HowToUse = () => {
               <ClipPath />
             </div>
           ))}
-
-          
         </div>
       </div>
     </Section>
