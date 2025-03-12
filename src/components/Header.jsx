@@ -6,7 +6,6 @@ import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
 import { useState, useRef } from "react";
-import { showAuthForm } from "../utils/auth";
 import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
@@ -56,27 +55,7 @@ const Header = () => {
   };
 
   const handleAuthClick = (formId) => {
-    showAuthForm(formId);
-    let targetElement = null;
-    if (formId === "signUp") {
-      targetElement = document.getElementById("signUp-form");
-    } else if (formId === "signIn") {
-      targetElement = document.getElementById("signIn-form");
-    }
-
-    if (targetElement) {
-      const headerHeight = headerRef.current?.offsetHeight || 0;
-      const targetPosition =
-        targetElement.getBoundingClientRect().top +
-        window.scrollY -
-        headerHeight;
-
-      window.scrollTo({
-        top: targetPosition,
-        behavior: "smooth",
-      });
-    }
-
+    navigate(`/${formId}`); // Navigate to /signin or /signup
     if (openNavigation) {
       enablePageScroll();
       setOpenNavigation(false);
@@ -89,6 +68,7 @@ const Header = () => {
     mainSections.forEach((section) => {
       section.style.display = "block";
     });
+    navigate("/"); // Redirect to home page after sign-out
   };
 
   return (
@@ -144,13 +124,13 @@ const Header = () => {
                 <div className="flex flex-col items-center">
                   <Button
                     className="whitespace-nowrap"
-                    onClick={() => handleAuthClick("signUp")}
+                    onClick={() => handleAuthClick("signup")}
                   >
                     New Account
                   </Button>
                   <Button
                     className="mt-2 whitespace-nowrap"
-                    onClick={() => handleAuthClick("signIn")}
+                    onClick={() => handleAuthClick("signin")}
                   >
                     Sign In
                   </Button>
@@ -174,13 +154,13 @@ const Header = () => {
             <>
               <Button
                 className="text-n-1/50 transition-colors hover:text-n-1 mr-2 lg:mr-4 hidden whitespace-nowrap lg:block"
-                onClick={() => handleAuthClick("signUp")}
+                onClick={() => handleAuthClick("signup")}
               >
                 New Account
               </Button>
               <Button
                 className="hidden whitespace-nowrap lg:block"
-                onClick={() => handleAuthClick("signIn")}
+                onClick={() => handleAuthClick("signin")}
               >
                 Sign In
               </Button>

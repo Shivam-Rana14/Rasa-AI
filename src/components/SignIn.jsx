@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import Button from "./Button";
-import { hideAuthForm } from "../utils/auth";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { signin, loading, error } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ const SignIn = () => {
       if (result && result.success) {
         setEmail("");
         setPassword("");
-        hideAuthForm("signIn");
+        navigate("/"); // Redirect to home page after successful sign-in
       }
     } catch (err) {
       console.error("Sign-in error:", err);

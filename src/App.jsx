@@ -33,12 +33,6 @@ const App = () => {
             path="/"
             element={
               <>
-                <div id="signIn" className="hidden">
-                  <SignIn />
-                </div>
-                <div id="signUp" className="hidden">
-                  <SignUp />
-                </div>
                 <Hero />
                 <Benefits />
                 <Collaboration />
@@ -47,6 +41,8 @@ const App = () => {
               </>
             }
           />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
       <ButtonGradient />
