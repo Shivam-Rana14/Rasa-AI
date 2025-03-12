@@ -51,16 +51,6 @@ const ProtectedRoute = ({ children }) => {
               <p className="text-center text-n-1/50">
                 To unlock the best outfits!
               </p>
-              <div className="mt-6 flex justify-center">
-                <button
-                  onClick={() => {
-                    window.location.reload();
-                  }}
-                  className="bg-purple-500 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded" // Adjust to your primary button style
-                >
-                  Reload Page
-                </button>
-              </div>
             </div>
           </div>
         )}
