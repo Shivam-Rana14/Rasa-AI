@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
@@ -9,8 +9,8 @@ export const AuthProvider = ({ children }) => {
 
   // Check for existing session on mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+    const token = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
     if (token && savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -21,20 +21,23 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('https://rasa-ai.onrender.com/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
-      
+      const response = await fetch(
+        "https://rasa-ai.onrender.com/api/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
+
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong');
+        throw new Error(data.message || "Something went wrong");
       }
-      
+
       return { success: true, message: data.message };
     } catch (err) {
       setError(err.message);
@@ -48,23 +51,26 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('https://rasa-ai.onrender.com/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      
+      const response = await fetch(
+        "https://rasa-ai.onrender.com/api/auth/signin",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.message || 'Invalid credentials');
+        throw new Error(data.message || "Invalid credentials");
       }
-      
+
       setUser(data.user);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
       return { success: true };
     } catch (err) {
       setError(err.message);
@@ -76,12 +82,14 @@ export const AuthProvider = ({ children }) => {
 
   const signout = () => {
     setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, signup, signin, signout }}>
+    <AuthContext.Provider
+      value={{ user, loading, error, signup, signin, signout }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );
