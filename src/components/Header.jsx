@@ -5,7 +5,7 @@ import { navigation } from "../constants";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { showAuthForm } from "../utils/auth";
 import { useAuth } from "../context/AuthContext";
 
@@ -13,8 +13,9 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signout } = useAuth();
-
   const [openNavigation, setOpenNavigation] = useState(false);
+  const headerRef = useRef(null);
+
   const toggleNavigation = () => {
     if (openNavigation) {
       setOpenNavigation(false);
@@ -34,7 +35,14 @@ const Header = () => {
       if (url.startsWith("#")) {
         const element = document.querySelector(url);
         if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
+          const headerHeight = headerRef.current?.offsetHeight || 0;
+          const targetPosition =
+            element.getBoundingClientRect().top + window.scrollY - headerHeight;
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: "smooth",
+          });
         }
       } else {
         navigate(url);
@@ -49,7 +57,6 @@ const Header = () => {
 
   const handleAuthClick = (formId) => {
     showAuthForm(formId);
-    // Scroll to the auth form
     let targetElement = null;
     if (formId === "signUp") {
       targetElement = document.getElementById("signUp-form");
@@ -58,9 +65,7 @@ const Header = () => {
     }
 
     if (targetElement) {
-      // Calculate the offset to account for the fixed header
-      const headerHeight =
-        document.querySelector("div.fixed")?.offsetHeight || 0;
+      const headerHeight = headerRef.current?.offsetHeight || 0;
       const targetPosition =
         targetElement.getBoundingClientRect().top +
         window.scrollY -
@@ -88,6 +93,7 @@ const Header = () => {
 
   return (
     <div
+      ref={headerRef}
       className={`fixed top-0 left-0 w-full z-50 border-b border-n-6 lg:bg-n-8/90 lg:backdrop-blur-sm ${
         openNavigation ? "bg-n-8" : "bg-n-8/90 backdrop-blur-sm"
       }`}

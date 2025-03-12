@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import Button from "./Button";
-import { hideAuthForm } from "../utils/auth";
+import { hideAuthForm, showAuthForm } from "../utils/auth";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -20,18 +20,20 @@ const SignUp = () => {
       // Redirect to sign in after 2 seconds
       setTimeout(() => {
         hideAuthForm("signUp");
-        document.getElementById("signIn").classList.remove("hidden");
-        document.getElementById("signIn").style.display = "block";
+        showAuthForm("signIn");
       }, 20);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-n-8 px-5">
+    <div
+      id="signUp-form"
+      className="flex min-h-screen items-center justify-center bg-n-8 px-5"
+    >
       <div className="w-full max-w-md rounded-2xl bg-n-7 p-8">
         <h2 className="mb-6 text-3xl font-bold text-n-1">Create New Account</h2>
         {error && <p className="mb-4 text-red-500">{error}</p>}
-        <form onSubmit={handleSubmit} id="signUp-form">
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="mb-2 block text-n-1" htmlFor="signup-name">
               Name
