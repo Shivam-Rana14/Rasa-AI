@@ -29,6 +29,8 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route
             path="/"
             element={
@@ -41,8 +43,6 @@ const App = () => {
               </>
             }
           />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
       <ButtonGradient />
