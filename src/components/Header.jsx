@@ -5,7 +5,7 @@ import { navigation } from "../constants";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
@@ -14,6 +14,7 @@ const Header = () => {
   const { user, signout } = useAuth();
   const [openNavigation, setOpenNavigation] = useState(false);
   const headerRef = useRef(null);
+  const [scrollAfterNavigation, setScrollAfterNavigation] = useState(null);
 
   const toggleNavigation = () => {
     if (openNavigation) {
@@ -25,24 +26,40 @@ const Header = () => {
     }
   };
 
+  useEffect(() => {
+    if (scrollAfterNavigation) {
+      setTimeout(() => {
+        scrollToFunc(scrollAfterNavigation);
+        setScrollAfterNavigation(null); // Reset the state
+      }, 0); // Execute after the current event loop
+    }
+  }, [scrollAfterNavigation]);
+
+  const scrollToFunc = function (url) {
+    console.log("Scrolling");
+    const element = document.querySelector(url);
+    if (element) {
+      const headerHeight = headerRef.current?.offsetHeight || 0;
+      const targetPosition =
+        element.getBoundingClientRect().top + window.scrollY - headerHeight;
+
+      window.scrollTo({
+        top: targetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleClick = (e, url) => {
     if (e) {
       e.preventDefault();
     }
+    console.log(url);
 
     if (url) {
       if (url.startsWith("#")) {
-        const element = document.querySelector(url);
-        if (element) {
-          const headerHeight = headerRef.current?.offsetHeight || 0;
-          const targetPosition =
-            element.getBoundingClientRect().top + window.scrollY - headerHeight;
-
-          window.scrollTo({
-            top: targetPosition,
-            behavior: "smooth",
-          });
-        }
+        navigate("/");
+        setScrollAfterNavigation(url);
       } else {
         navigate(url);
       }
