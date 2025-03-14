@@ -23,15 +23,11 @@ const RasaAI = () => {
     renderAnalysisResult,
     setShowPreferences,
   } = useContext(RasaAiCTX);
-  const navigate = useNavigate();
+
   return (
     <Section className="relative overflow-hidden">
       <div className="container">
-        <div className="flex justify-between items-center mb-10">
-          <Button onClick={() => navigate("/")} className="min-w-[8rem]">
-            Back Home
-          </Button>
-        </div>
+        <div className="flex justify-between items-center mb-10"></div>
         <div className="relative">
           <div className="text-center">
             <h1 className="mb-6 text-5xl lg:text-7xl font-bold text-n-1">
