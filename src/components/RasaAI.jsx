@@ -1,8 +1,6 @@
 import React, { useContext } from "react";
 import Section from "./Section";
-import Button from "./Button";
 import { RasaAiCTX } from "../context/RasaAiContext";
-import { useNavigate } from "react-router-dom";
 
 const RasaAI = () => {
   const {

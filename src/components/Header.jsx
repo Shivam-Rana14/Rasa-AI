@@ -45,7 +45,7 @@ const Header = () => {
 
       window.scrollTo({
         top: targetPosition,
-        behavior: "smooth",
+        behavior: "auto",
       });
     }
   };
