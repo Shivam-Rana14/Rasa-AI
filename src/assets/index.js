@@ -42,6 +42,7 @@ import raindrop from "./collaboration/raindrop.png";
 import slack from "./collaboration/slack.png";
 import lines from "./pricing/lines.svg";
 import stars from "./pricing/stars.svg";
+import nykaa2 from "./collaboration/nykaa2.png";
 
 import coins from "./roadmap/coins.png";
 import done from "./roadmap/done.svg";
@@ -108,6 +109,7 @@ export {
   curve1,
   curve2,
   discord,
+  nykaa2,
   figma,
   framer,
   notion,

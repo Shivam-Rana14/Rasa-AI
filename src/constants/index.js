@@ -25,6 +25,7 @@ import {
   nykaa,
   myntra,
   amazon,
+  nykaa2,
 } from "../assets";
 
 export const navigation = [
@@ -136,7 +137,7 @@ export const collabApps = [
   {
     id: "0",
     title: "Nykaa",
-    icon: figma,
+    icon: nykaa2,
     width: 26,
     height: 36,
   },
