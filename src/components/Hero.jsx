@@ -8,7 +8,7 @@ import { useRef } from "react";
 import Generating from "./Generating";
 import Notification from "./Notification";
 import CompanyLogos from "./CompanyLogos";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../store/AuthContext";
 
 const Hero = () => {
   const { user } = useAuth();

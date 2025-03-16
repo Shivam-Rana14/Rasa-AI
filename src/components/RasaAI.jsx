@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import Section from "./Section";
-import { RasaAiCTX } from "../context/RasaAiContext";
+import { RasaAiCTX } from "../store/RasaAiContext";
 
 const RasaAI = () => {
   const {

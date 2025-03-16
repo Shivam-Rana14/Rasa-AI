@@ -9,9 +9,9 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import RasaAI from "./components/RasaAI";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./store/AuthContext";
 import { Routes, Route } from "react-router-dom";
-import RasaAiContextProvider from "./context/RasaAiContext";
+import RasaAiContextProvider from "./store/RasaAiContext";
 
 const App = () => {
   return (
