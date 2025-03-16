@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
   const [showModal, setShowModal] = useState(false);
-  const [navigateHome, setNavigateHome] = useState(false);
+  const [navigateSignIn, setNavigateSignIn] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -13,13 +13,13 @@ const ProtectedRoute = ({ children }) => {
       setShowModal(true);
       const modalTimer = setTimeout(() => {
         setShowModal(false);
-        setNavigateHome(true);
+        setNavigateSignIn(true);
       }, 2000);
 
       return () => clearTimeout(modalTimer);
     } else {
       setShowModal(false);
-      setNavigateHome(false);
+      setNavigateSignIn(false);
     }
   }, [user]);
 
@@ -54,7 +54,9 @@ const ProtectedRoute = ({ children }) => {
             </div>
           </div>
         )}
-        {navigateHome && <Navigate to="/" state={{ from: location }} replace />}
+        {navigateSignIn && (
+          <Navigate to="/signIn" state={{ from: location }} replace />
+        )}
       </>
     );
   }
