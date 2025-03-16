@@ -46,20 +46,20 @@ const Collaboration = () => {
                   }`}
                 >
                   <div
-                    className={`relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-n-7 border border-n-1/15 rounded-xl -rotate-${
+                    className={`relative -top-[1.6rem] flex flex-col items-center w-[3.2rem] h-[3.2rem] bg-n-7 border border-n-1/15 rounded-xl -rotate-${
                       index * 45
                     }`}
                   >
-                    <span>
+                    <div className="flex items-center justify-center w-full h-full">
                       <img
-                        className="m-auto"
+                        className="m-auto max-w-full max-h-full object-contain"
                         width={app.width}
                         height={app.height}
                         alt={app.title}
                         src={app.icon}
                       />
-                      <p>{app.title}</p>
-                    </span>
+                    </div>
+                    <p className="mt-1 text-xs text-center">{app.title}</p>
                   </div>
                 </li>
               ))}
