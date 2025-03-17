@@ -15,17 +15,18 @@ const HowToUse = () => {
           text="Transform your style in just a few simple steps with our AI-powered fashion assistant"
         />
 
-        <div className="flex flex-wrap gap-10 mb-10">
+        <div className="flex flex-wrap justify-center gap-6 mb-10">
           {howToUse.map((item) => (
             <div
-              className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] md:max-w-[24rem]"
+              className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] w-full sm:w-[45%] md:w-[30%] lg:w-[24rem] rounded-2xl overflow-hidden transform transition-all hover:scale-105 hover:shadow-2xl"
               style={{
                 backgroundImage: `url(${item.backgroundUrl})`,
               }}
               key={item.id}
             >
-              <div className="relative z-2 flex flex-col min-h-[22rem] p-[2.4rem] pointer-events-none">
-                <div className="flex items-center justify-center mb-3 w-12 h-12 bg-n-6 rounded-xl">
+              <div className="relative z-2 flex flex-col min-h-[22rem] p-8 pointer-events-none">
+                {/* Icon */}
+                <div className="flex items-center justify-center mb-6 w-12 h-12 bg-n-6 rounded-xl">
                   <img
                     src={item.iconUrl}
                     width={24}
@@ -33,8 +34,12 @@ const HowToUse = () => {
                     alt={item.title}
                   />
                 </div>
-                <h5 className="h5 mb-5">{item.title}</h5>
-                <p className="body-2 mb-6 text-n-3">{item.text}</p>
+
+                {/* Title and Text */}
+                <h5 className="h5 mb-6">{item.title}</h5>
+                <p className="body-2 mb-8 text-n-3">{item.text}</p>
+
+                {/* Step Number and Arrow */}
                 <div className="flex items-center mt-auto">
                   <div className="flex items-center justify-center w-10 h-10 bg-n-6 rounded-xl">
                     <div className="flex items-center justify-center w-8 h-8 bg-n-7 rounded-[0.75rem]">
@@ -50,8 +55,10 @@ const HowToUse = () => {
                 </div>
               </div>
 
+              {/* Gradient Light */}
               {<GradientLight />}
 
+              {/* ClipPath and Hover Effect */}
               <div
                 className="absolute inset-0.5 bg-n-8"
                 style={{ clipPath: "url(#benefits)" }}
@@ -59,6 +66,7 @@ const HowToUse = () => {
                 <div className="absolute inset-0 opacity-0 transition-opacity hover:opacity-10"></div>
               </div>
 
+              {/* ClipPath SVG */}
               <ClipPath />
             </div>
           ))}
