@@ -14,17 +14,17 @@ const Benefits = () => {
           title="Style made simple with RASA.ai"
         />
 
-        <div className="flex flex-wrap gap-10 mb-10">
+        <div className="flex flex-wrap justify-center gap-6 mb-10">
           {benefits.map((item) => (
             <div
-              className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] md:max-w-[24rem]"
+              className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] w-full sm:w-[45%] md:w-[30%] lg:w-[24rem] rounded-2xl overflow-hidden transform transition-all hover:scale-105 hover:shadow-2xl"
               style={{
                 backgroundImage: `url(${item.backgroundUrl})`,
               }}
               key={item.id}
             >
-              <div className="relative z-2 flex flex-col min-h-[22rem] p-[2.4rem] pointer-events-none ">
-                <h5 className="h5 mb-5">{item.title}</h5>
+              <div className="relative z-2 flex flex-col min-h-[22rem] p-[2.4rem] pointer-events-none">
+                <h5 className="h5 mb-5 text-n-1">{item.title}</h5>
                 <p className="body-2 mb-6 text-n-3">{item.text}</p>
                 <div className="flex items-center mt-auto">
                   <img
@@ -32,6 +32,7 @@ const Benefits = () => {
                     width={48}
                     height={48}
                     alt={item.title}
+                    className="rounded-full"
                   />
                   <p className="ml-auto font-code text-xs font-bold text-n-1 uppercase tracking-wider">
                     Explore more
