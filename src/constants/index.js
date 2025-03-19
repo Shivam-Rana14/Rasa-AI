@@ -198,6 +198,7 @@ export const pricing = [
     title: "Basic",
     description: "AI chatbot, personalized recommendations",
     price: "0",
+    backgroundUrl: "./src/assets/benefits/card-1.svg",
     features: [
       "An AI that can understand your fashion needs.",
       "Personalized recommendations based on your preferences",
@@ -209,6 +210,7 @@ export const pricing = [
     title: "Premium",
     description: "Advanced AI chatbot, priority support, analytics dashboard",
     price: "9.99",
+    backgroundUrl: "./src/assets/benefits/card-2.svg",
     features: [
       "An advanced AI model that can analyze complex complexions.",
       "An analytics dashboard to track your evolving fashion interest.",
@@ -219,6 +221,7 @@ export const pricing = [
   {
     id: "2",
     title: "Enterprise",
+    backgroundUrl: "./src/assets/benefits/card-3.svg",
     description: "Custom AI chatbot, advanced analytics, dedicated account",
     price: null,
     features: ["Contact Us."],

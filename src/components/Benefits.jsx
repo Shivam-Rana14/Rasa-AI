@@ -48,7 +48,6 @@ const Benefits = () => {
   return (
     <Section id="features">
       <motion.div
-        ref={containerRef}
         className="container relative z-2"
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
@@ -61,6 +60,7 @@ const Benefits = () => {
         <div className="flex flex-wrap justify-center gap-6 mb-10">
           {benefits.map((item, index) => (
             <motion.div
+              ref={containerRef}
               key={item.id}
               variants={itemVariants}
               initial="hidden"
