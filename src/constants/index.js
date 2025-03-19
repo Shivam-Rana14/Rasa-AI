@@ -221,7 +221,7 @@ export const pricing = [
   {
     id: "2",
     title: "Enterprise",
-    backgroundUrl: "./src/assets/benefits/card-3.svg",
+    backgroundUrl: "./src/assets/benefits/card-1.svg",
     description: "Custom AI chatbot, advanced analytics, dedicated account",
     price: null,
     features: ["Contact Us."],
