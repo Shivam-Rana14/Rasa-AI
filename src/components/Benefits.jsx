@@ -4,7 +4,7 @@ import Section from "./Section";
 import Arrow from "../assets/svg/Arrow";
 import { GradientLight } from "./design/Benefits";
 import ClipPath from "../assets/svg/ClipPath";
-import { motion, useInView, useScroll } from "framer-motion";
+import { motion, useInView, useScroll, useAnimation } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 const Benefits = () => {
@@ -12,6 +12,7 @@ const Benefits = () => {
   const isInView = useInView(containerRef, { threshold: 1 });
   const { scrollYProgress } = useScroll({ container: containerRef });
   const [isMobile, setIsMobile] = useState(false);
+  const controls = useAnimation(); // Use animation controls
 
   useEffect(() => {
     const checkMobile = () => {
@@ -23,6 +24,14 @@ const Benefits = () => {
 
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  useEffect(() => {
+    if (isInView && !isMobile) {
+      controls.start("visible"); // Start animation when in view
+    } else {
+      controls.start("hidden"); // Reset animation when out of view
+    }
+  }, [isInView, isMobile, controls]);
 
   const itemVariants = {
     hidden: (i) => {
@@ -62,7 +71,8 @@ const Benefits = () => {
       <motion.div
         className="container relative z-2"
         initial="hidden"
-        animate={isInView && !isMobile ? "visible" : "visible"} // Always visible on mobile
+        animate={controls} // Use animation controls
+        ref={containerRef}
       >
         <Heading
           className="md:max-w-md lg:max-w-2xl"
@@ -78,12 +88,11 @@ const Benefits = () => {
         >
           {benefits.map((item, index) => (
             <motion.div
-              ref={isMobile ? null : containerRef} // No ref on mobile
               key={item.id}
-              variants={isMobile ? {} : itemVariants} // No variants on mobile
-              initial="visible" // Always visible on mobile
-              animate="visible" // Always visible on mobile
-              whileHover={isMobile ? {} : "hover"} // No hover on mobile
+              variants={isMobile ? {} : itemVariants}
+              initial="hidden"
+              animate={isMobile ? "visible" : controls} //use control on desktop
+              whileHover={isMobile ? {} : "hover"}
               className={`block relative p-0.5 bg-no-repeat bg-[length:100%_100%] ${
                 isMobile
                   ? "w-full my-2"
@@ -93,7 +102,7 @@ const Benefits = () => {
                 backgroundImage: `url(${item.backgroundUrl})`,
                 y: isMobile
                   ? 0
-                  : scrollYProgress.get() * (index % 2 === 0 ? 30 : -30), // No scroll effect on mobile
+                  : scrollYProgress.get() * (index % 2 === 0 ? 30 : -30),
               }}
               custom={index}
             >
