@@ -14,13 +14,18 @@ const Pricing = () => {
           text="Select the plan that best fits your needs and start transforming your style with AI"
         />
 
-        <div className="flex flex-col md:flex-row gap-8 md:gap-10 mb-10 justify-center items-center">
-          <LeftLine />
-          <div className="flex flex-col md:flex-row gap-8 md:gap-10">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-10 mb-10 justify-center items-center px-4">
+          {" "}
+          {/* Added px-4 for mobile padding */}
+          <LeftLine className="hidden md:block" />{" "}
+          {/* Hide LeftLine on mobile */}
+          <div className="flex flex-col md:flex-row gap-8 md:gap-10 w-full">
+            {" "}
+            {/* Made the inner div w-full for mobile */}
             {pricing.map((plan) => (
               <div
                 key={plan.id}
-                className="bg-no-repeat bg-[length:100%_100%] rounded-2xl p-6 md:p-8 w-full shadow-lg transition-transform hover:scale-102 md:hover:scale-105" // Modified animation
+                className="bg-no-repeat bg-[length:100%_100%] rounded-2xl p-6 md:p-8 w-full shadow-lg transition-transform hover:scale-102 md:hover:scale-105"
                 style={{
                   backgroundImage: `url(${plan.backgroundUrl})`,
                 }}
@@ -67,7 +72,8 @@ const Pricing = () => {
               </div>
             ))}
           </div>
-          <RightLine />
+          <RightLine className="hidden md:block" />{" "}
+          {/* Hide RightLine on mobile */}
         </div>
       </div>
     </Section>

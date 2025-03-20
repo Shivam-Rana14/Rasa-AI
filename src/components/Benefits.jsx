@@ -5,12 +5,24 @@ import Arrow from "../assets/svg/Arrow";
 import { GradientLight } from "./design/Benefits";
 import ClipPath from "../assets/svg/ClipPath";
 import { motion, useInView, useScroll } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const Benefits = () => {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { threshold: 1 });
   const { scrollYProgress } = useScroll({ container: containerRef });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const itemVariants = {
     hidden: (i) => {
@@ -50,26 +62,38 @@ const Benefits = () => {
       <motion.div
         className="container relative z-2"
         initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
+        animate={isInView && !isMobile ? "visible" : "visible"} // Always visible on mobile
       >
         <Heading
           className="md:max-w-md lg:max-w-2xl"
           title="Style made simple with RASA.ai"
         />
 
-        <div className="flex flex-wrap justify-center gap-6 mb-10">
+        <div
+          className={`flex ${
+            isMobile
+              ? "flex-col w-full gap-4 px-4"
+              : "flex-wrap justify-center gap-6"
+          } mb-10`}
+        >
           {benefits.map((item, index) => (
             <motion.div
-              ref={containerRef}
+              ref={isMobile ? null : containerRef} // No ref on mobile
               key={item.id}
-              variants={itemVariants}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-              whileHover="hover"
-              className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] w-full sm:w-[45%] md:w-[30%] lg:w-[24rem] rounded-2xl overflow-hidden transform transition-all"
+              variants={isMobile ? {} : itemVariants} // No variants on mobile
+              initial="visible" // Always visible on mobile
+              animate="visible" // Always visible on mobile
+              whileHover={isMobile ? {} : "hover"} // No hover on mobile
+              className={`block relative p-0.5 bg-no-repeat bg-[length:100%_100%] ${
+                isMobile
+                  ? "w-full my-2"
+                  : "w-full sm:w-[45%] md:w-[30%] lg:w-[24rem]"
+              } rounded-2xl overflow-hidden transform transition-all`}
               style={{
                 backgroundImage: `url(${item.backgroundUrl})`,
-                y: scrollYProgress.get() * (index % 2 === 0 ? 30 : -30), // Merged styles
+                y: isMobile
+                  ? 0
+                  : scrollYProgress.get() * (index % 2 === 0 ? 30 : -30), // No scroll effect on mobile
               }}
               custom={index}
             >
