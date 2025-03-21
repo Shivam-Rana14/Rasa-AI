@@ -12,7 +12,8 @@ const Benefits = () => {
   const isInView = useInView(containerRef, { threshold: 1 });
   const { scrollYProgress } = useScroll({ container: containerRef });
   const [isMobile, setIsMobile] = useState(false);
-  const controls = useAnimation(); // Use animation controls
+
+  const controls = useAnimation();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -27,9 +28,9 @@ const Benefits = () => {
 
   useEffect(() => {
     if (isInView && !isMobile) {
-      controls.start("visible"); // Start animation when in view
+      controls.start("visible");
     } else {
-      controls.start("hidden"); // Reset animation when out of view
+      controls.start("hidden");
     }
   }, [isInView, isMobile, controls]);
 
@@ -71,7 +72,7 @@ const Benefits = () => {
       <motion.div
         className="container relative z-2"
         initial="hidden"
-        animate={controls} // Use animation controls
+        animate={controls}
         ref={containerRef}
       >
         <Heading
@@ -91,7 +92,7 @@ const Benefits = () => {
               key={item.id}
               variants={isMobile ? {} : itemVariants}
               initial="hidden"
-              animate={isMobile ? "visible" : controls} //use control on desktop
+              animate={isMobile ? "visible" : controls}
               whileHover={isMobile ? {} : "hover"}
               className={`block relative p-0.5 bg-no-repeat bg-[length:100%_100%] ${
                 isMobile
@@ -134,8 +135,8 @@ const Benefits = () => {
                   {item.imageUrl && (
                     <img
                       src={item.imageUrl}
-                      width={380}
-                      height={362}
+                      width="100%" // Ensure image scales within its container
+                      height="100%" // Ensure image scales within its container
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
