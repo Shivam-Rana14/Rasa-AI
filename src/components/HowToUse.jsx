@@ -5,20 +5,18 @@ import { GradientLight } from "./design/Benefits";
 import ClipPath from "../assets/svg/ClipPath";
 import Arrow from "../assets/svg/Arrow";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 const HowToUse = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const containerRef = useRef(null);
+
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [userInteracted, setUserInteracted] = useState(false);
 
-  // Minimum swipe distance (in pixels)
   const minSwipeDistance = 50;
 
-  // Auto-rotation intervals (in milliseconds)
   const defaultInterval = 3000;
   const extendedInterval = 6000;
 
@@ -34,7 +32,6 @@ const HowToUse = () => {
   }, []);
 
   useEffect(() => {
-    // Auto-rotate cards with longer delay after user interaction
     const interval = setInterval(
       () => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % howToUse.length);
@@ -42,7 +39,6 @@ const HowToUse = () => {
       userInteracted ? extendedInterval : defaultInterval
     );
 
-    // Reset user interaction flag after extended interval
     if (userInteracted) {
       const timer = setTimeout(() => {
         setUserInteracted(false);
@@ -57,7 +53,6 @@ const HowToUse = () => {
     return () => clearInterval(interval);
   }, [userInteracted]);
 
-  // Handle touch events for mobile swipe
   const onTouchStart = (e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -75,11 +70,11 @@ const HowToUse = () => {
     const isRightSwipe = distance < -minSwipeDistance;
 
     if (isLeftSwipe) {
-      // Handle left swipe - go to next card
+      //go to next card
       setCurrentIndex((prevIndex) => (prevIndex + 1) % howToUse.length);
       setUserInteracted(true);
     } else if (isRightSwipe) {
-      // Handle right swipe - go to previous card
+      //go to previous card
       setCurrentIndex(
         (prevIndex) => (prevIndex - 1 + howToUse.length) % howToUse.length
       );
@@ -103,19 +98,12 @@ const HowToUse = () => {
     setUserInteracted(true);
   };
 
-  const cardVariants = {
-    initial: { opacity: 0, x: 50, scale: 0.9 },
-    animate: { opacity: 1, x: 0, scale: 1 },
-    exit: { opacity: 0, x: -50, scale: 0.9 },
-  };
-
   const mobileCardVariants = {
     initial: { opacity: 0, x: 100 },
     animate: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -100 },
   };
 
-  // Generate pagination indicators for both mobile and desktop
   const renderPaginationDots = () => {
     return (
       <div className="flex justify-center gap-2 mt-8">
@@ -217,7 +205,6 @@ const HowToUse = () => {
               </div>
             </div>
 
-            {/* Mobile pagination and navigation */}
             <div className="mt-2 px-4">
               {renderPaginationDots()}
 
@@ -240,21 +227,16 @@ const HowToUse = () => {
             </div>
           </div>
         ) : (
-          // Desktop view with properly centered cards
           <div className="flex flex-col items-center">
-            {/* Card carousel with fixed height container */}
             <div className="relative h-[30rem] w-full mb-8">
               {howToUse.map((item, index) => {
-                // Calculate position based on distance from current index
                 const distance =
                   (index - currentIndex + howToUse.length) % howToUse.length;
-                // Calculate position for before and after current (handle wrap-around)
                 const adjustedDistance =
                   distance > howToUse.length / 2
                     ? distance - howToUse.length
                     : distance;
 
-                // Use position absolute and left/transform for precise centering
                 let position = "left-1/2";
                 let translateX = "translate(-50%, -50%)";
 
@@ -265,21 +247,14 @@ const HowToUse = () => {
                   position = "left-[25%]";
                   translateX = "translate(-50%, -50%)";
                 } else if (Math.abs(adjustedDistance) > 1) {
-                  // Hide cards that are too far from current
                   return null;
                 }
 
                 // Set consistent card size
                 const cardWidth =
                   adjustedDistance === 0 ? "w-80 md:w-96" : "w-64 md:w-80";
-
-                // Calculate z-index (higher for current card)
                 const zIndex = adjustedDistance === 0 ? 30 : 20;
-
-                // Calculate opacity
                 const opacity = adjustedDistance === 0 ? 1 : 0.6;
-
-                // Set scale based on current or not
                 const scale = adjustedDistance === 0 ? "scale-100" : "scale-90";
 
                 return (
@@ -343,10 +318,8 @@ const HowToUse = () => {
               })}
             </div>
 
-            {/* Pagination dots */}
             {renderPaginationDots()}
 
-            {/* Navigation arrows */}
             <div className="flex justify-center mt-4 gap-8">
               <button
                 onClick={() => handleArrowClick("prev")}

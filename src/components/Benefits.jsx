@@ -37,10 +37,10 @@ const Benefits = () => {
   const itemVariants = {
     hidden: (i) => {
       const positions = [
-        { x: -25, y: 0 }, // Reduced values for better mobile experience
-        { x: 25, y: 0 }, // Reduced values for better mobile experience
-        { x: 0, y: -25 }, // Reduced values for better mobile experience
-        { x: 0, y: 25 }, // Reduced values for better mobile experience
+        { x: -25, y: 0 },
+        { x: 25, y: 0 },
+        { x: 0, y: -25 },
+        { x: 0, y: 25 },
       ];
       const position = positions[i % 4];
       return {
@@ -56,11 +56,11 @@ const Benefits = () => {
       transition: {
         duration: 0.6,
         ease: "easeOut",
-        delay: isMobile ? i * 0.1 : 0, // Sequential animation for mobile
+        delay: isMobile ? i * 0.1 : 0,
       },
     }),
     hover: {
-      scale: 1.03, // Reduced scale effect for better mobile experience
+      scale: 1.03,
       transition: {
         duration: 0.3,
         ease: "easeInOut",
@@ -68,9 +68,8 @@ const Benefits = () => {
     },
   };
 
-  // Subtle scroll animation even on mobile
   const getScrollY = (index) => {
-    const baseMovement = isMobile ? 10 : 30; // Reduced movement on mobile
+    const baseMovement = isMobile ? 10 : 30;
     return (
       scrollYProgress.get() * (index % 2 === 0 ? baseMovement : -baseMovement)
     );
@@ -97,8 +96,8 @@ const Benefits = () => {
               variants={itemVariants}
               initial="hidden"
               animate={controls}
-              whileHover="hover" // Enable hover effects for all devices
-              whileTap={{ scale: 0.98 }} // Add tap effect for mobile
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
               className={`block relative p-0.5 bg-no-repeat bg-[length:100%_100%] ${
                 isMobile
                   ? "w-full my-2"
@@ -137,7 +136,6 @@ const Benefits = () => {
                 <motion.div
                   className="absolute inset-0 opacity-0 transition-opacity"
                   whileHover={{ opacity: 0.1 }}
-                  // Added touch effect for mobile:
                   whileTap={{ opacity: 0.1 }}
                 >
                   {item.imageUrl && (
