@@ -156,7 +156,7 @@ export const collabApps = [
   },
   {
     id: "2",
-    title: "Myntra",
+    title: "Tata Cliq",
     icon: discord,
     width: 36,
     height: 28,
