@@ -6,23 +6,6 @@ import { GradientLight } from "./design/Benefits";
 import ClipPath from "../assets/svg/ClipPath";
 import { motion, useInView, useScroll, useAnimation } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import bg1 from "../assets/benefits/card-1.svg";
-import bg2 from "../assets/benefits/card-2.svg";
-import bg3 from "../assets/benefits/card-3.svg";
-import bg4 from "../assets/benefits/card-4.svg";
-
-const modifiedBenefits = benefits.map((benefit, index) => {
-  let backgroundUrl;
-  if (index === 0) backgroundUrl = bg1;
-  if (index === 1) backgroundUrl = bg2;
-  if (index === 2) backgroundUrl = bg3;
-  if (index === 3) backgroundUrl = bg4;
-
-  return {
-    ...benefit,
-    backgroundUrl: backgroundUrl,
-  };
-});
 
 const Benefits = () => {
   const containerRef = useRef(null);
@@ -107,7 +90,7 @@ const Benefits = () => {
               : "flex-wrap justify-center gap-6"
           } mb-10`}
         >
-          {modifiedBenefits.map((item, index) => (
+          {benefits.map((item, index) => (
             <motion.div
               key={item.id}
               variants={itemVariants}
