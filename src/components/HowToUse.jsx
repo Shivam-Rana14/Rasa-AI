@@ -43,7 +43,7 @@ const HowToUse = () => {
     <Section id="how-to-use" crosses className="py-16">
       <div className="container relative z-2">
         <Heading
-          className="md:max-w-md lg:max-w-2xl xl:max-w-4xl" // Improved larger screen support
+          className="md:max-w-md lg:max-w-2xl xl:max-w-4xl"
           title="How to Get Started"
           text="Transform your style in just a few simple steps with our AI-powered fashion assistant"
         />
@@ -51,29 +51,26 @@ const HowToUse = () => {
         <div className="flex justify-center mb-10">
           <div
             className={`flex ${
-              isMobile ? "flex-col w-full gap-4 px-4" : "gap-6 xl:gap-8" // Improved larger screen gap
+              isMobile ? "flex-col w-full gap-4 px-4" : "gap-6 xl:gap-8"
             }`}
             ref={containerRef}
           >
             {howToUse.map((item, index) => (
-              <div
+              <motion.div
                 key={item.id}
-                className={`relative p-0.5 rounded-2xl overflow-hidden transform transition-all ${
+                className={`relative p-0.5 bg-no-repeat bg-[length:100%_100%] rounded-2xl overflow-hidden transform transition-all ${
                   isMobile
-                    ? "w-full my-2"
+                    ? "w-full max-w-md my-2 mx-auto px-0 "
                     : index === currentIndex
-                    ? "w-full sm:w-[45%] md:w-[30%] lg:w-[24rem] xl:w-[28rem] shadow-2xl z-[1000] my-8" // Improved larger screen width
-                    : "w-[8rem] sm:w-[12rem] md:w-[15rem] xl:w-[18rem] opacity-50 pointer-events-none z-0 my-8" // Improved larger screen width
+                    ? "w-full sm:w-[45%] md:w-[30%] lg:w-[24rem] xl:w-[28rem] shadow-2xl z-[1000] my-8"
+                    : "w-[8rem] sm:w-[12rem] md:w-[15rem] xl:w-[18rem] opacity-50 pointer-events-none z-0 my-8"
                 }`}
                 style={{
-                  backgroundImage: item.backgroundUrl
-                    ? `url(${item.backgroundUrl})`
-                    : "none",
-                  backgroundSize: "cover",
+                  backgroundImage: `url(${item.backgroundUrl})`,
                 }}
               >
                 {isMobile || index === currentIndex ? (
-                  <div className="relative z-2 flex flex-col min-h-[22rem] p-8">
+                  <div className="relative z-2 flex flex-col min-h-[22rem] p-6 sm:p-8 w-full">
                     <div className="flex items-center justify-center mb-6 w-12 h-12 bg-n-6 rounded-xl">
                       <img
                         src={item.iconUrl}
@@ -86,7 +83,7 @@ const HowToUse = () => {
                     <h5 className="h5 mb-6">{item.title}</h5>
                     <p className="body-2 mb-8 text-n-3">{item.text}</p>
 
-                    <div className="flex items-center mt-auto">
+                    <div className="flex items-center mt-auto w-full">
                       <div className="flex items-center justify-center w-10 h-10 bg-n-6 rounded-xl">
                         <div className="flex items-center justify-center w-8 h-8 bg-n-7 rounded-[0.75rem]">
                           <div className="font-code text-xs font-bold text-n-3">
@@ -97,7 +94,7 @@ const HowToUse = () => {
                       <p className="ml-auto font-code text-xs font-bold text-n-1 uppercase tracking-wider">
                         Step {Number(item.id) + 1}
                       </p>
-                      <Arrow />
+                      <Arrow className="ml-2" />
                     </div>
                   </div>
                 ) : (
@@ -111,7 +108,7 @@ const HowToUse = () => {
                         duration: 0.5,
                         type: "spring",
                         stiffness: 100,
-                      }} // Improved animation
+                      }}
                       className="relative z-2 flex flex-col min-h-[22rem] p-8 pointer-events-none"
                     >
                       <div className="flex items-center justify-center mb-6 w-12 h-12 bg-n-6 rounded-xl">
@@ -153,7 +150,7 @@ const HowToUse = () => {
                 </div>
 
                 <ClipPath />
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

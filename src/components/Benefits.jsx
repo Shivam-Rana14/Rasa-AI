@@ -9,7 +9,7 @@ import { useRef, useState, useEffect } from "react";
 
 const Benefits = () => {
   const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { threshold: 1 });
+  const isInView = useInView(containerRef, { threshold: 0.1 }); // Reduced threshold for better mobile visibility
   const { scrollYProgress } = useScroll({ container: containerRef });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -27,7 +27,10 @@ const Benefits = () => {
   }, []);
 
   useEffect(() => {
-    if (isInView && !isMobile) {
+    // Always make visible on mobile, otherwise use animation controls
+    if (isMobile) {
+      controls.start("visible");
+    } else if (isInView) {
       controls.start("visible");
     } else {
       controls.start("hidden");
@@ -90,9 +93,9 @@ const Benefits = () => {
           {benefits.map((item, index) => (
             <motion.div
               key={item.id}
-              variants={isMobile ? {} : itemVariants}
+              variants={itemVariants}
               initial="hidden"
-              animate={isMobile ? "visible" : controls}
+              animate="visible" // Always visible for all screen sizes
               whileHover={isMobile ? {} : "hover"}
               className={`block relative p-0.5 bg-no-repeat bg-[length:100%_100%] ${
                 isMobile
@@ -102,7 +105,7 @@ const Benefits = () => {
               style={{
                 backgroundImage: `url(${item.backgroundUrl})`,
                 y: isMobile
-                  ? 0
+                  ? 0 // No y-movement on mobile
                   : scrollYProgress.get() * (index % 2 === 0 ? 30 : -30),
               }}
               custom={index}
