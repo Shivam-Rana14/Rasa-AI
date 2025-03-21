@@ -58,17 +58,17 @@ import notification2 from "./notification/image-2.png";
 import notification3 from "./notification/image-3.png";
 import notification4 from "./notification/image-4.png";
 
-import benefitCard1 from "./benefits/card-1.svg";
-import benefitCard2 from "./benefits/card-2.svg";
-import benefitCard3 from "./benefits/card-3.svg";
-import benefitCard4 from "./benefits/card-4.svg";
-import benefitCard5 from "./benefits/card-5.svg";
-import benefitCard6 from "./benefits/card-6.svg";
-import benefitIcon1 from "./benefits/icon-1.svg";
-import benefitIcon2 from "./benefits/icon-2.svg";
-import benefitIcon3 from "./benefits/icon-3.svg";
-import benefitIcon4 from "./benefits/icon-4.svg";
-import benefitImage2 from "./benefits/image-2.png";
+import benefitCard1 from "/benefits/card-1.svg";
+import benefitCard2 from "/benefits/card-2.svg";
+import benefitCard3 from "/benefits/card-3.svg";
+import benefitCard4 from "/benefits/card-4.svg";
+import benefitCard5 from "/benefits/card-5.svg";
+import benefitCard6 from "/benefits/card-6.svg";
+import benefitIcon1 from "/benefits/icon-1.svg";
+import benefitIcon2 from "/benefits/icon-2.svg";
+import benefitIcon3 from "/benefits/icon-3.svg";
+import benefitIcon4 from "/benefits/icon-4.svg";
+import benefitImage2 from "/benefits/image-2.png";
 
 import discordBlack from "./socials/discord.svg";
 import facebook from "./socials/facebook.svg";
@@ -76,12 +76,12 @@ import instagram from "./socials/instagram.svg";
 import telegram from "./socials/telegram.svg";
 import twitter from "./socials/twitter.svg";
 
-import card1 from "../assets/benefits/card-1.svg";
-import card2 from "../assets/benefits/card-2.svg";
-import card3 from "../assets/benefits/card-3.svg";
-import card4 from "../assets/benefits/card-4.svg";
-import card5 from "../assets/benefits/card-5.svg";
-import card6 from "../assets/benefits/card-6.svg";
+import card1 from "/benefits/card-1.svg";
+import card2 from "/benefits/card-2.svg";
+import card3 from "/benefits/card-3.svg";
+import card4 from "/benefits/card-4.svg";
+import card5 from "/benefits/card-5.svg";
+import card6 from "/benefits/card-6.svg";
 
 export {
   card1,
