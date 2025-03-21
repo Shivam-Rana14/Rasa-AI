@@ -9,7 +9,7 @@ import { useRef, useState, useEffect } from "react";
 
 const Benefits = () => {
   const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { threshold: 0.1 }); // Reduced threshold for better mobile visibility
+  const isInView = useInView(containerRef, { threshold: 0.1, once: false });
   const { scrollYProgress } = useScroll({ container: containerRef });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -27,23 +27,20 @@ const Benefits = () => {
   }, []);
 
   useEffect(() => {
-    // Always make visible on mobile, otherwise use animation controls
-    if (isMobile) {
-      controls.start("visible");
-    } else if (isInView) {
+    if (isInView) {
       controls.start("visible");
     } else {
       controls.start("hidden");
     }
-  }, [isInView, isMobile, controls]);
+  }, [isInView, controls]);
 
   const itemVariants = {
     hidden: (i) => {
       const positions = [
-        { x: -50, y: 0 },
-        { x: 50, y: 0 },
-        { x: 0, y: -50 },
-        { x: 0, y: 50 },
+        { x: -25, y: 0 }, // Reduced values for better mobile experience
+        { x: 25, y: 0 }, // Reduced values for better mobile experience
+        { x: 0, y: -25 }, // Reduced values for better mobile experience
+        { x: 0, y: 25 }, // Reduced values for better mobile experience
       ];
       const position = positions[i % 4];
       return {
@@ -52,17 +49,18 @@ const Benefits = () => {
         y: position.y,
       };
     },
-    visible: {
+    visible: (i) => ({
       opacity: 1,
       x: 0,
       y: 0,
       transition: {
         duration: 0.6,
         ease: "easeOut",
+        delay: isMobile ? i * 0.1 : 0, // Sequential animation for mobile
       },
-    },
+    }),
     hover: {
-      scale: 1.05,
+      scale: 1.03, // Reduced scale effect for better mobile experience
       transition: {
         duration: 0.3,
         ease: "easeInOut",
@@ -70,14 +68,17 @@ const Benefits = () => {
     },
   };
 
+  // Subtle scroll animation even on mobile
+  const getScrollY = (index) => {
+    const baseMovement = isMobile ? 10 : 30; // Reduced movement on mobile
+    return (
+      scrollYProgress.get() * (index % 2 === 0 ? baseMovement : -baseMovement)
+    );
+  };
+
   return (
     <Section id="features">
-      <motion.div
-        className="container relative z-2"
-        initial="hidden"
-        animate={controls}
-        ref={containerRef}
-      >
+      <motion.div className="container relative z-2" ref={containerRef}>
         <Heading
           className="md:max-w-md lg:max-w-2xl"
           title="Style made simple with RASA.ai"
@@ -95,8 +96,9 @@ const Benefits = () => {
               key={item.id}
               variants={itemVariants}
               initial="hidden"
-              animate="visible" // Always visible for all screen sizes
-              whileHover={isMobile ? {} : "hover"}
+              animate={controls}
+              whileHover="hover" // Enable hover effects for all devices
+              whileTap={{ scale: 0.98 }} // Add tap effect for mobile
               className={`block relative p-0.5 bg-no-repeat bg-[length:100%_100%] ${
                 isMobile
                   ? "w-full my-2"
@@ -104,9 +106,7 @@ const Benefits = () => {
               } rounded-2xl overflow-hidden transform transition-all`}
               style={{
                 backgroundImage: `url(${item.backgroundUrl})`,
-                y: isMobile
-                  ? 0 // No y-movement on mobile
-                  : scrollYProgress.get() * (index % 2 === 0 ? 30 : -30),
+                y: getScrollY(index),
               }}
               custom={index}
             >
@@ -134,17 +134,22 @@ const Benefits = () => {
                 className="absolute inset-0.5 bg-n-8"
                 style={{ clipPath: "url(#benefits)" }}
               >
-                <div className="absolute inset-0 opacity-0 transition-opacity hover:opacity-10">
+                <motion.div
+                  className="absolute inset-0 opacity-0 transition-opacity"
+                  whileHover={{ opacity: 0.1 }}
+                  // Added touch effect for mobile:
+                  whileTap={{ opacity: 0.1 }}
+                >
                   {item.imageUrl && (
                     <img
                       src={item.imageUrl}
-                      width="100%" // Ensure image scales within its container
-                      height="100%" // Ensure image scales within its container
+                      width="100%"
+                      height="100%"
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
                   )}
-                </div>
+                </motion.div>
               </div>
 
               <ClipPath />
