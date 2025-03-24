@@ -13,7 +13,6 @@ import {
   ACCESSORY_RECOMMENDATIONS,
   styles,
 } from "../constants/index";
-import { set } from "mongoose";
 
 export const RasaAiCTX = createContext({
   image: null,
