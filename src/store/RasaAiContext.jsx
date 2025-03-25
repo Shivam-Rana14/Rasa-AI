@@ -245,7 +245,7 @@ export default function RasaAiContextProvider({ children }) {
       }
     }
   
-    Provide short, to-the-point suggestions. Ensure the 'accessories' array provides combinations that directly complement each of the 'outfits' in the order they are listed. Give optimal and relevant body type recommendations. Provide appropriate seasonal tips.
+    Provide latest, short, to-the-point suggestions. Ensure the 'accessories' array provides combinations that directly complement each of the 'outfits' in the order they are listed. Give optimal and relevant body type recommendations. Provide appropriate seasonal tips.The color recommendations must be based on the skin tone
   
     Based on:
     - Skin tone: ${skinTone}
