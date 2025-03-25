@@ -264,6 +264,9 @@ const AnalysisResult = () => {
               <h4 className="text-xl font-semibold text-n-1">
                 Outfit Suggestions
               </h4>
+              <h5 className="text-sm font-semibold text-n-1">
+                Click the outfit box to see the full look
+              </h5>
               <SpeechButton
                 text={speechContent.outfits}
                 onSpeak={speak}
