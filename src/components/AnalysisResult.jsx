@@ -1,10 +1,30 @@
 import React, { useContext } from "react";
 import { RasaAiCTX } from "../store/RasaAiContext";
 import { useTextToSpeech, SpeechButton } from "./TextToSpeech.jsx";
+import OutfitImageModal from "./OutfitImageModal";
 
 const AnalysisResult = () => {
-  const { previewUrl, preferences, analysisResult } = useContext(RasaAiCTX);
+  const {
+    previewUrl,
+    preferences,
+    analysisResult,
+    outfitImages,
+    fetchOutfitImage,
+    setSelectedOutfitImage,
+  } = useContext(RasaAiCTX);
   const { speak, stopSpeaking, isSpeaking } = useTextToSpeech();
+
+  // Handle outfit click
+  const handleOutfitClick = (outfit) => {
+    const outfitName =
+      typeof outfit === "string" ? outfit : outfit.name || "Outfit";
+    fetchOutfitImage(outfitName);
+
+    // Show image immediately if we already have it
+    if (outfitImages[outfitName]) {
+      setSelectedOutfitImage(outfitImages[outfitName]);
+    }
+  };
 
   // Gender-specific styling for recommendations
   const genderStyles = {
@@ -98,6 +118,9 @@ const AnalysisResult = () => {
 
   return (
     <div className="w-full max-w-4xl">
+      {/* Outfit Image Modal */}
+      <OutfitImageModal />
+
       {/* Image Preview */}
       <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-n-6 to-n-7 aspect-[4/3]">
         <img
@@ -252,19 +275,47 @@ const AnalysisResult = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {(analysisResult.recommendations.outfits || []).map(
-                (item, index) => (
-                  <div
-                    key={index}
-                    className={`p-4 rounded-xl border ${currentGenderStyle.bg} border-n-6`}
-                  >
-                    <h5 className="font-medium text-n-1 mb-1">
-                      {typeof item === "string" ? item : item.name || "Outfit"}
-                    </h5>
-                    {typeof item === "object" && item.description && (
-                      <p className="text-sm text-n-3">{item.description}</p>
-                    )}
-                  </div>
-                )
+                (item, index) => {
+                  const outfitName =
+                    typeof item === "string" ? item : item.name || "Outfit";
+                  const hasImage = !!outfitImages[outfitName];
+
+                  return (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-xl border ${currentGenderStyle.bg} border-n-6 cursor-pointer transition-all active:scale-[0.98]`}
+                      onClick={() => handleOutfitClick(item)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <h5 className="font-medium text-n-1 mb-1">
+                          {outfitName}
+                        </h5>
+                        {hasImage && (
+                          <span className="text-n-3 text-xs flex items-center gap-1">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
+                              <path d="M12 19c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            </svg>
+                            View
+                          </span>
+                        )}
+                      </div>
+                      {typeof item === "object" && item.description && (
+                        <p className="text-sm text-n-3">{item.description}</p>
+                      )}
+                    </div>
+                  );
+                }
               )}
             </div>
           </div>

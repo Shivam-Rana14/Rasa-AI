@@ -26,6 +26,10 @@ export const RasaAiCTX = createContext({
   analyzeSkinTone: () => {},
   resetAll: () => {},
   setShowPreferences: () => {},
+  outfitImages: {},
+  fetchOutfitImage: () => {},
+  selectedOutfitImage: null,
+  setSelectedOutfitImage: () => {},
 });
 
 export default function RasaAiContextProvider({ children }) {
@@ -46,6 +50,48 @@ export default function RasaAiContextProvider({ children }) {
   const [analysisResult, setAnalysisResult] = useState(null);
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [outfitImages, setOutfitImages] = useState({});
+  const [selectedOutfitImage, setSelectedOutfitImage] = useState(null);
+
+  const fetchOutfitImage = async (outfitName) => {
+    // Check if we already have this image cached
+    if (outfitImages[outfitName]) return;
+
+    const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
+    if (!apiKey) {
+      console.error("Pexels API key not found");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+          outfitName
+        )}&per_page=1`,
+        {
+          headers: {
+            Authorization: apiKey,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Pexels API request failed with status ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+      if (data.photos && data.photos.length > 0) {
+        setOutfitImages((prev) => ({
+          ...prev,
+          [outfitName]: data.photos[0].src.medium,
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch outfit image:", err);
+    }
+  };
 
   const handlePreferenceChange = (key, value) => {
     if (key.includes("measurements.")) {
@@ -324,6 +370,10 @@ export default function RasaAiContextProvider({ children }) {
     analyzeSkinTone,
     resetAll,
     setShowPreferences,
+    outfitImages,
+    fetchOutfitImage,
+    selectedOutfitImage,
+    setSelectedOutfitImage,
   };
 
   return (
