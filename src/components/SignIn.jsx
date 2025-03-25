@@ -98,7 +98,9 @@ const SignIn = () => {
               disabled={loading}
               type="submit"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading
+                ? "Please wait this request can take upto 2 minutes due to high traffic on our servers"
+                : "Sign In"}
             </Button>
           </form>
         </div>
