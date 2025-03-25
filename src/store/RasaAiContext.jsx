@@ -166,29 +166,41 @@ export default function RasaAiContextProvider({ children }) {
   };
 
   const generateGeminiPrompt = (skinTone, preferences) => {
-    return `Act as a professional fashion stylist and Provide fashion recommendations in this exact JSON format:
+    return `Act as a professional fashion stylist and provide concise fashion recommendations in this exact JSON format:
     {
       "colorPalette": {
-        "description": "text",
-        "recommended": ["array of colors according to skin type"],
-        "avoid": ["array of colors according to skin type"],
-        "neutrals": ["array of colors according to skin type"]
+        "description": "Brief color palette recommendations.",
+        "recommended": ["Color1", "Color2", "Color3", "Color4", "Color5", "Color6"],
+        "avoid": ["Color7", "Color8", "Color9"],
+        "neutrals": ["Neutral1", "Neutral2", "Neutral3"]
       },
-      "outfits": ["array of outfit descriptions"],
-      "accessories": ["array of accessory descriptions"],
+      "outfits": [
+        "Outfit suggestion 1",
+        "Outfit suggestion 2",
+        "Outfit suggestion 3",
+        "Outfit suggestion 4"
+      ],
+      "accessories": [
+        "Accessories for outfit 1",
+        "Accessories for outfit 2",
+        "Accessories for outfit 3",
+        "Accessories for outfit 4"
+      ],
       "seasonalTips": {
-        "fabrics": ["array of fabric suggestion according to season"],
-        "layers": ["array of layering suggestion according to season and style"],
-        "colors": ["array of recommended colors according to skin type"]
+        "fabrics": ["Fabric 1", "Fabric 2", "Fabric 3"],
+        "layers": ["Layering tip 1", "Layering tip 2"],
+        "colors": ["Seasonal color 1", "Seasonal color 2", "Seasonal color 3"]
       },
       "bodyTypeTips": {
-        "tops": ["array of top suggestions according to body type"],
-        "bottoms": ["array of top suggestions according to body type"],
-        "dresses": ["array of top suggestions according to body type""],
-        "general": ["array of top suggestions according to body type""]
+        "tops": ["Top tip 1", "Top tip 2"],
+        "bottoms": ["Bottom tip 1", "Bottom tip 2"],
+        "dresses": ["Dress tip 1", "Dress tip 2"],
+        "general": ["General tip 1", "General tip 2"]
       }
     }
-    
+  
+    Provide short, to-the-point suggestions. Ensure the 'accessories' array provides combinations that directly complement each of the 'outfits' in the order they are listed. Give optimal and relevant body type recommendations. Provide appropriate seasonal tips.
+  
     Based on:
     - Skin tone: ${skinTone}
     - Gender: ${preferences.gender}
