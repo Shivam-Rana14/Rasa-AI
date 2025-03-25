@@ -3,6 +3,23 @@ import { useState, useEffect } from "react";
 export const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [currentUtterance, setCurrentUtterance] = useState(null);
+  const [voices, setVoices] = useState([]);
+
+  // Load available voices
+  useEffect(() => {
+    const loadVoices = () => {
+      const availableVoices = window.speechSynthesis.getVoices();
+      setVoices(availableVoices);
+    };
+
+    // Chrome needs this event listener
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
 
   const speak = (text) => {
     if ("speechSynthesis" in window) {
@@ -12,6 +29,20 @@ export const useTextToSpeech = () => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
+
+      // Try to find a female voice
+      const femaleVoice = voices.find(
+        (voice) =>
+          voice.name.includes("Female") ||
+          voice.lang.includes("en-US") || // English US voices often include female options
+          voice.name.includes("Microsoft Zira") || // Windows female voice
+          voice.name.includes("Google UK English Female") || // Chrome female voice
+          voice.name.includes("Samantha") // macOS female voice
+      );
+
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
 
       utterance.onstart = () => {
         setIsSpeaking(true);
@@ -54,6 +85,7 @@ export const useTextToSpeech = () => {
   return { speak, stopSpeaking, isSpeaking, currentUtterance };
 };
 
+// SpeechButton component remains the same
 export const SpeechButton = ({
   text,
   onSpeak,
