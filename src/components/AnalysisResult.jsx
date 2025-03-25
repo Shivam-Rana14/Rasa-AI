@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import { RasaAiCTX } from "../store/RasaAiContext";
+import { useTextToSpeech, SpeechButton } from "./TextToSpeech.jsx";
 
 const AnalysisResult = () => {
   const { previewUrl, preferences, analysisResult } = useContext(RasaAiCTX);
+  const { speak, stopSpeaking, isSpeaking } = useTextToSpeech();
 
   // Gender-specific styling for recommendations
   const genderStyles = {
@@ -20,6 +22,79 @@ const AnalysisResult = () => {
 
   const currentGenderStyle =
     genderStyles[preferences.gender] || genderStyles.male;
+
+  // Speech content for each section
+  const speechContent = {
+    all: `Your style recommendations. Skin type: ${analysisResult.skinTone}. ${
+      analysisResult.recommendations.colorPalette?.description ||
+      "These colors will complement your natural undertones"
+    }. Recommended colors: ${
+      analysisResult.recommendations.colorPalette?.recommended?.join(", ") || ""
+    }. Colors to avoid: ${
+      analysisResult.recommendations.colorPalette?.avoid?.join(", ") || ""
+    }. Best neutrals: ${
+      analysisResult.recommendations.colorPalette?.neutrals?.join(", ") || ""
+    }. Outfit suggestions: ${
+      analysisResult.recommendations.outfits
+        ?.map((o) => (typeof o === "string" ? o : o.name))
+        .join(", ") || ""
+    }. Accessories: ${
+      analysisResult.recommendations.accessories
+        ?.map((a) => (typeof a === "string" ? a : a.name))
+        .join(", ") || ""
+    }. Recommended fabrics: ${
+      analysisResult.recommendations.seasonalTips?.fabrics?.join(", ") || ""
+    }. Layering tips: ${
+      analysisResult.recommendations.seasonalTips?.layers?.join(", ") || ""
+    }`,
+
+    colorPalette: `Color Palette. Recommended colors: ${
+      analysisResult.recommendations.colorPalette?.recommended?.join(", ") || ""
+    }. Colors to avoid: ${
+      analysisResult.recommendations.colorPalette?.avoid?.join(", ") || ""
+    }. Best neutrals: ${
+      analysisResult.recommendations.colorPalette?.neutrals?.join(", ") || ""
+    }`,
+
+    outfits: `Outfit suggestions: ${
+      analysisResult.recommendations.outfits
+        ?.map((o) =>
+          typeof o === "string"
+            ? o
+            : `${o.name || "Outfit"}. ${o.description || ""}`
+        )
+        .join(". ") || ""
+    }`,
+
+    accessories: `Accessories: ${
+      analysisResult.recommendations.accessories
+        ?.map((a) => (typeof a === "string" ? a : a.name))
+        .join(", ") || ""
+    }`,
+
+    seasonalTips: `Seasonal Style Tips. Recommended fabrics: ${
+      analysisResult.recommendations.seasonalTips?.fabrics?.join(", ") || ""
+    }. Layering tips: ${
+      analysisResult.recommendations.seasonalTips?.layers?.join(", ") || ""
+    }`,
+
+    bodyTypeTips: analysisResult.recommendations.bodyTypeTips
+      ? `Body Type Recommendations. ${Object.entries(
+          analysisResult.recommendations.bodyTypeTips
+        )
+          .map(
+            ([category, items]) =>
+              `${category}: ${items
+                .map((i) =>
+                  typeof i === "string"
+                    ? i
+                    : `${i.name || "Tip"}. ${i.description || ""}`
+                )
+                .join(". ")}`
+          )
+          .join(". ")}`
+      : "",
+  };
 
   return (
     <div className="w-full max-w-4xl">
@@ -40,20 +115,28 @@ const AnalysisResult = () => {
             <h3 className="text-3xl font-bold text-n-1">
               Your Style Recommendations
             </h3>
-            <span
-              className={`px-4 py-2 rounded-full text-sm font-medium ${currentGenderStyle.bg} ${currentGenderStyle.text}`}
-            >
-              {preferences.gender.charAt(0).toUpperCase() +
-                preferences.gender.slice(1)}
-            </span>
+            <div className="flex items-center gap-4">
+              <span
+                className={`px-4 py-2 rounded-full text-sm font-medium ${currentGenderStyle.bg} ${currentGenderStyle.text}`}
+              >
+                {preferences.gender.charAt(0).toUpperCase() +
+                  preferences.gender.slice(1)}
+              </span>
+              <SpeechButton
+                text={speechContent.all}
+                onSpeak={speak}
+                onStop={stopSpeaking}
+                isSpeaking={isSpeaking}
+                className={currentGenderStyle.bg}
+                label="Read all recommendations"
+              />
+            </div>
           </div>
 
           {/* Skin Type */}
           <div className="p-6 rounded-2xl bg-n-7 border border-n-6 shadow-lg">
-            <h4 className="text-xl font-semibold text-n-1 mb-3">
-              Your Skin Type
-            </h4>
-            <div className="flex flex-col md:flex-row gap-6">
+            <h4 className="text-xl font-semibold text-n-1">Your Skin Type</h4>
+            <div className="flex flex-col md:flex-row gap-6 mt-3">
               <div className="flex-1">
                 <p className="text-lg font-medium text-color-1 mb-2">
                   {analysisResult.skinTone}
@@ -68,11 +151,19 @@ const AnalysisResult = () => {
 
           {/* Color Palette */}
           <div className="p-6 rounded-2xl bg-n-7 border border-n-6 shadow-lg">
-            <h4 className="text-xl font-semibold text-n-1 mb-4">
-              Color Palette
-            </h4>
+            <div className="flex items-center justify-between gap-4">
+              <h4 className="text-xl font-semibold text-n-1">Color Palette</h4>
+              <SpeechButton
+                text={speechContent.colorPalette}
+                onSpeak={speak}
+                onStop={stopSpeaking}
+                isSpeaking={isSpeaking}
+                className={currentGenderStyle.bg}
+                label="Read color palette"
+              />
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
               {/* Recommended Colors */}
               <div>
                 <h5 className="text-n-3 mb-3 flex items-center gap-2">
@@ -146,10 +237,20 @@ const AnalysisResult = () => {
 
           {/* Outfit Recommendations */}
           <div className="p-6 rounded-2xl bg-n-7 border border-n-6 shadow-lg">
-            <h4 className="text-xl font-semibold text-n-1 mb-4">
-              Outfit Suggestions
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex items-center justify-between gap-4">
+              <h4 className="text-xl font-semibold text-n-1">
+                Outfit Suggestions
+              </h4>
+              <SpeechButton
+                text={speechContent.outfits}
+                onSpeak={speak}
+                onStop={stopSpeaking}
+                isSpeaking={isSpeaking}
+                className={currentGenderStyle.bg}
+                label="Read outfit suggestions"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {(analysisResult.recommendations.outfits || []).map(
                 (item, index) => (
                   <div
@@ -170,8 +271,18 @@ const AnalysisResult = () => {
 
           {/* Accessories */}
           <div className="p-6 rounded-2xl bg-n-7 border border-n-6 shadow-lg">
-            <h4 className="text-xl font-semibold text-n-1 mb-4">Accessories</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex items-center justify-between gap-4">
+              <h4 className="text-xl font-semibold text-n-1">Accessories</h4>
+              <SpeechButton
+                text={speechContent.accessories}
+                onSpeak={speak}
+                onStop={stopSpeaking}
+                isSpeaking={isSpeaking}
+                className={currentGenderStyle.bg}
+                label="Read accessories"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
               {(analysisResult.recommendations.accessories || []).map(
                 (item, index) => (
                   <div
@@ -191,10 +302,20 @@ const AnalysisResult = () => {
 
           {/* Seasonal Tips */}
           <div className="p-6 rounded-2xl bg-n-7 border border-n-6 shadow-lg">
-            <h4 className="text-xl font-semibold text-n-1 mb-4">
-              Seasonal Style Tips
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex items-center justify-between gap-4">
+              <h4 className="text-xl font-semibold text-n-1">
+                Seasonal Style Tips
+              </h4>
+              <SpeechButton
+                text={speechContent.seasonalTips}
+                onSpeak={speak}
+                onStop={stopSpeaking}
+                isSpeaking={isSpeaking}
+                className={currentGenderStyle.bg}
+                label="Read seasonal tips"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
               <div>
                 <h5 className="text-n-3 mb-3">Recommended Fabrics</h5>
                 <div className="flex flex-wrap gap-2">
@@ -232,10 +353,20 @@ const AnalysisResult = () => {
           {/* Body Type Tips */}
           {analysisResult.recommendations.bodyTypeTips && (
             <div className="p-6 rounded-2xl bg-n-7 border border-n-6 shadow-lg">
-              <h4 className="text-xl font-semibold text-n-1 mb-4">
-                Body Type Recommendations
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center justify-between gap-4">
+                <h4 className="text-xl font-semibold text-n-1">
+                  Body Type Recommendations
+                </h4>
+                <SpeechButton
+                  text={speechContent.bodyTypeTips}
+                  onSpeak={speak}
+                  onStop={stopSpeaking}
+                  isSpeaking={isSpeaking}
+                  className={currentGenderStyle.bg}
+                  label="Read body type recommendations"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                 {Object.entries(
                   analysisResult.recommendations.bodyTypeTips
                 ).map(([category, items]) => (
