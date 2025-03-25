@@ -4,12 +4,41 @@ export const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [currentUtterance, setCurrentUtterance] = useState(null);
   const [voices, setVoices] = useState([]);
+  const [femaleVoice, setFemaleVoice] = useState(null);
 
-  // Load available voices
+  // Load available voices and set female voice
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
       setVoices(availableVoices);
+
+      // Manually select a female voice by specific names
+      const preferredFemaleVoices = [
+        "Microsoft Zira Desktop", // Windows
+        "Google UK English Female", // Chrome
+        "Samantha", // macOS
+        "Karen", // macOS alternative
+        "Tessa", // macOS South African
+        "Fiona", // macOS Scottish
+        "Veena", // Chrome Indian English
+        "Allison", // macOS
+        "Serena", // macOS British
+        "Ava", // macOS Australian
+        "Susan", // macOS
+        "Female", // Generic fallback
+      ];
+
+      // Find the first available preferred female voice
+      const foundVoice = availableVoices.find((voice) =>
+        preferredFemaleVoices.some((name) => voice.name.includes(name))
+      );
+
+      if (foundVoice) {
+        setFemaleVoice(foundVoice);
+      } else if (availableVoices.length > 0) {
+        // Fallback to first available voice if no preferred female voice found
+        setFemaleVoice(availableVoices[0]);
+      }
     };
 
     // Chrome needs this event listener
@@ -30,16 +59,7 @@ export const useTextToSpeech = () => {
       utterance.rate = 1;
       utterance.pitch = 1;
 
-      // Try to find a female voice
-      const femaleVoice = voices.find(
-        (voice) =>
-          voice.name.includes("Female") ||
-          voice.lang.includes("en-US") || // English US voices often include female options
-          voice.name.includes("Microsoft Zira") || // Windows female voice
-          voice.name.includes("Google UK English Female") || // Chrome female voice
-          voice.name.includes("Samantha") // macOS female voice
-      );
-
+      // Use the pre-selected female voice
       if (femaleVoice) {
         utterance.voice = femaleVoice;
       }
