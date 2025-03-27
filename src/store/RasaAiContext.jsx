@@ -64,7 +64,6 @@ export default function RasaAiContextProvider({ children }) {
     }
 
     try {
-      // Enhance the query with fashion-specific terms
       const fashionQuery = `${outfitName} fashion outfit clothing apparel`;
       const response = await fetch(
         `https://api.pexels.com/v1/search?query=${encodeURIComponent(
