@@ -225,13 +225,15 @@ export default function RasaAiContextProvider({ children }) {
         "Outfit suggestion 1",
         "Outfit suggestion 2",
         "Outfit suggestion 3",
-        "Outfit suggestion 4"
-      ],
+        "Outfit suggestion 4",
+        "Outfit suggestion 5"
+        ],
       "accessories": [
         "Accessories for outfit 1",
         "Accessories for outfit 2",
         "Accessories for outfit 3",
-        "Accessories for outfit 4"
+        "Accessories for outfit 4",
+        "Accessories for outfit 5"
       ],
       "seasonalTips": {
         "fabrics": ["Fabric 1", "Fabric 2", "Fabric 3"],
@@ -246,7 +248,7 @@ export default function RasaAiContextProvider({ children }) {
       }
     }
   
-    Provide latest, short, to-the-point suggestions. Ensure the 'accessories' array provides combinations that directly complement each of the 'outfits' in the order they are listed. Give optimal and relevant body type recommendations. Provide appropriate seasonal tips.The color recommendations must be based on the skin tone
+    Ensure : Try to avoid same response,Provide latest, short, to-the-point suggestions. Ensure the 'accessories' array provides combinations that directly complement each of the 'outfits' in the order they are listed. Give optimal and relevant body type recommendations. Provide appropriate seasonal tips.The color recommendations must be based on the skin tone
   
     Based on:
     - Skin tone: ${skinTone}
