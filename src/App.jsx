@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./store/AuthContext";
 import { Routes, Route } from "react-router-dom";
 import RasaAiContextProvider from "./store/RasaAiContext";
+import DeveloperCredit from "./components/DeveloperCredit";
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
                 <Collaboration />
                 <HowToUse />
                 <Pricing />
+                <DeveloperCredit />
               </>
             }
           />
