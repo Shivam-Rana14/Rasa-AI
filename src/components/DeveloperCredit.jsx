@@ -15,7 +15,7 @@ const DeveloperCredit = () => {
       label: "GitHub",
     },
     {
-      icon: <Linkedin className="h-5 w-5 text-color-1" />,
+      icon: <Linkedin className="h-5 w-5 " />,
       url: "https://www.linkedin.com/in/shivam-rana-/",
       label: "LinkedIn",
     },
