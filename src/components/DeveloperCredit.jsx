@@ -25,8 +25,7 @@ const DeveloperCredit = () => {
   const [showSmiley, setShowSmiley] = useState(false);
   const [smileyPosition, setSmileyPosition] = useState({ x: 50, y: 50 });
   const [transitionSpeed, setTransitionSpeed] = useState(3);
-  const [hideMessage, setHideMessage] = useState(null);
-  const [cycleTimeout, setCycleTimeout] = useState(null); // Keep track of the cycle timeout
+  const [cycleTimeout, setCycleTimeout] = useState(null);
 
   const handleClick = () => {
     setIsModalVisible(true);
@@ -34,13 +33,8 @@ const DeveloperCredit = () => {
 
     const hideTimeout = setTimeout(() => {
       setIsModalVisible(false);
-      setTimeout(() => {
-        setHideMessage("Oops! You missed a chance. I'll be back in 2 minutes.");
-        setTimeout(() => setHideMessage(null), 2000);
-      }, 5000);
     }, 10000);
 
-    // Clear cycle timeout to prevent overlapping
     if (cycleTimeout) {
       clearTimeout(cycleTimeout);
     }
@@ -72,14 +66,8 @@ const DeveloperCredit = () => {
       setShowSmiley(true);
       const showTimeout = setTimeout(() => {
         setShowSmiley(false);
-        setTimeout(() => {
-          setHideMessage(
-            "Oops! You missed a chance. I'll be back in 2 minutes."
-          );
-          setTimeout(() => setHideMessage(null), 2000);
-        }, 5000);
         const hideTimeout = setTimeout(showSmileyCycle, 120000);
-        setCycleTimeout(hideTimeout); // Store cycle timeout
+        setCycleTimeout(hideTimeout);
         return () => clearTimeout(hideTimeout);
       }, 10000);
       return () => clearTimeout(showTimeout);
@@ -119,7 +107,7 @@ const DeveloperCredit = () => {
               />
             </svg>
             <div className="absolute -top-10 left-0 bg-n-7 text-n-2 p-2 rounded-md shadow-md whitespace-nowrap">
-              {hideMessage || "Click Me!"}
+              Click Me!
             </div>
           </div>
         </div>
