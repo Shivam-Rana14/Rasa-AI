@@ -76,7 +76,7 @@ const Benefits = () => {
   };
 
   return (
-    <Section id="features">
+    <Section id="features" crosses>
       <motion.div className="container relative z-2" ref={containerRef}>
         <Heading
           className="md:max-w-md lg:max-w-2xl"

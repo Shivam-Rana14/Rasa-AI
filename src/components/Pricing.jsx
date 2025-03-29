@@ -6,7 +6,7 @@ import { LeftLine, RightLine } from "./design/Pricing";
 
 const Pricing = () => {
   return (
-    <Section id="pricing" className="overflow-hidden">
+    <Section id="pricing" className="overflow-hidden" crosses>
       <div className="container relative z-2">
         <Heading
           className="md:max-w-md lg:max-w-2xl text-center"
