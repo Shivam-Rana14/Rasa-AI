@@ -102,7 +102,7 @@ const PreferencesForm = () => {
                     onClick={() => handlePreferenceChange("occasion", occasion)}
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                       preferences.occasion === occasion
-                        ? "bg-color-1 text-n-1 shadow-md"
+                        ? "bg-gradient-to-r from-color-1 to-color-2 text-n-1 shadow-md"
                         : "bg-n-6 text-n-3 hover:bg-n-5 border border-n-5"
                     }`}
                   >
@@ -124,7 +124,7 @@ const PreferencesForm = () => {
                     onClick={() => handlePreferenceChange("bodyType", type)}
                     className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                       preferences.bodyType === type
-                        ? "bg-color-2 text-n-1 shadow-md"
+                        ? "bg-gradient-to-r from-color-1 to-color-2 text-n-1 shadow-md"
                         : "bg-n-6 text-n-3 hover:bg-n-5 border border-n-5"
                     }`}
                   >
@@ -174,7 +174,7 @@ const PreferencesForm = () => {
                 onClick={() => handlePreferenceChange("season", season)}
                 className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   preferences.season === season
-                    ? "bg-gradient-to-r from-purple-500 to-purple-600 text-n-1 shadow-md"
+                    ? "bg-gradient-to-r from-color-1 to-color-2 text-n-1 shadow-md"
                     : "bg-n-6 text-n-3 hover:bg-n-5 border border-n-5"
                 }`}
               >
