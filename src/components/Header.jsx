@@ -7,6 +7,7 @@ import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../store/AuthContext";
+import confetti from "canvas-confetti";
 
 const Header = () => {
   const location = useLocation();
@@ -15,6 +16,33 @@ const Header = () => {
   const [openNavigation, setOpenNavigation] = useState(false);
   const headerRef = useRef(null);
   const [scrollAfterNavigation, setScrollAfterNavigation] = useState(null);
+
+  function handleNameClick() {
+    const duration = 2 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        return;
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  }
 
   const toggleNavigation = () => {
     if (openNavigation) {
@@ -127,9 +155,12 @@ const Header = () => {
             <div className="flex flex-col items-center lg:hidden">
               {user ? (
                 <>
-                  <span className="text-n-1 whitespace-nowrap">
-                    Welcome, {user.name}
-                  </span>
+                  <button
+                    onClick={handleNameClick}
+                    className="text-n-1 whitespace-nowrap"
+                  >
+                    {user.name}
+                  </button>
                   <Button
                     className="mt-2 whitespace-nowrap"
                     onClick={handleSignOut}
@@ -160,9 +191,12 @@ const Header = () => {
         <div className="flex items-center ml-auto">
           {user ? (
             <>
-              <span className="lg:block mr-4 text-n-1 hidden whitespace-nowrap">
-                Welcome, {user.name}
-              </span>
+              <button
+                onClick={handleNameClick}
+                className="lg:block mr-4 text-n-1 hidden whitespace-nowrap"
+              >
+                {user.name}
+              </button>
               <Button className="hidden lg:flex" onClick={handleSignOut}>
                 Sign Out
               </Button>
