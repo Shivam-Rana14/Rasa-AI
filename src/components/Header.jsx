@@ -116,7 +116,7 @@ const Header = () => {
     mainSections.forEach((section) => {
       section.style.display = "block";
     });
-    navigate("/"); // Redirect to home page after sign-out
+    navigate("/");
   };
 
   return (

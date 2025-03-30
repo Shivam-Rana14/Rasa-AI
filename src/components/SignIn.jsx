@@ -4,6 +4,7 @@ import Button from "./Button";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner";
+import confetti from "canvas-confetti";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,33 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { signin, loading, error, setError } = useAuth();
   const navigate = useNavigate();
+
+  function handleNameClick() {
+    const duration = 2 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        return;
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  }
 
   // Reset form and errors when the component mounts
   useEffect(() => {
@@ -29,6 +57,7 @@ const SignIn = () => {
       if (result && result.success) {
         resetForm();
         navigate("/");
+        handleNameClick();
       }
     } catch (err) {
       console.error("Sign-in error:", err);
