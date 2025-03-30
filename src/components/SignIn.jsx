@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // Add useEffect
+import { useState, useEffect } from "react";
 import { useAuth } from "../store/AuthContext";
 import Button from "./Button";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
