@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import ButtonGradient from "./assets/svg/ButtonGradient";
 import Benefits from "./components/Benefits";
 import Collaboration from "./components/Collaboration";
@@ -46,6 +47,7 @@ const App = () => {
             }
           />
         </Routes>
+        <SpeedInsights />
       </div>
       <ButtonGradient />
     </AuthProvider>
