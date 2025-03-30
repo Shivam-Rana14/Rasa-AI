@@ -18,6 +18,9 @@ const Header = () => {
   const [scrollAfterNavigation, setScrollAfterNavigation] = useState(null);
 
   function handleNameClick() {
+    setOpenNavigation(false);
+    enablePageScroll();
+    navigate("/");
     const duration = 2 * 1000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
