@@ -1,4 +1,4 @@
-import { Instagram, GitHub, LinkedIn } from "lucide-react";
+import { Instagram, Github, Linkedin } from "lucide-react";
 import { curve } from "../assets";
 import { useState, useEffect } from "react";
 
@@ -10,12 +10,12 @@ const DeveloperCredit = () => {
       label: "Instagram",
     },
     {
-      icon: <GitHub className="h-5 w-5 text-color-4" />,
+      icon: <Github className="h-5 w-5 text-color-4" />,
       url: "https://github.com/Shivam-Rana14",
       label: "GitHub",
     },
     {
-      icon: <LinkedIn className="h-5 w-5 " />,
+      icon: <Linkedin className="h-5 w-5 " />,
       url: "https://www.linkedin.com/in/shivam-rana-/",
       label: "LinkedIn",
     },
