@@ -33,7 +33,7 @@ const DeveloperCredit = () => {
 
     const hideTimeout = setTimeout(() => {
       setIsModalVisible(false);
-    }, 10000);
+    }, 5000);
 
     if (cycleTimeout) {
       clearTimeout(cycleTimeout);
@@ -69,7 +69,7 @@ const DeveloperCredit = () => {
         const hideTimeout = setTimeout(showSmileyCycle, 120000);
         setCycleTimeout(hideTimeout);
         return () => clearTimeout(hideTimeout);
-      }, 10000);
+      }, 8000);
       return () => clearTimeout(showTimeout);
     };
 
