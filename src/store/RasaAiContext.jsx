@@ -241,14 +241,14 @@ export default function RasaAiContextProvider({ children }) {
         "colors": ["Seasonal color 1", "Seasonal color 2", "Seasonal color 3"]
       },
       "bodyTypeTips": {
-        "tops": ["Top tip 1", "Top tip 2"],
-        "bottoms": ["Bottom tip 1", "Bottom tip 2"],
-        "dresses": ["Dress tip 1", "Dress tip 2"],
-        "general": ["General tip 1", "General tip 2"]
+        "tops": ["Top tip 1", "Top tip 2","Top tip 3"],
+        "bottoms": ["Bottom tip 1", "Bottom tip 2","Bottom tip 3],
+        "dresses": ["Dress tip 1", "Dress tip 2","Dress tip 3"],
+        "general": ["General tip 1", "General tip 2","General tip 3"]
       }
     }
   
-    Ensure : Try to avoid same response,Provide latest, short, to-the-point suggestions. Ensure the 'accessories' array provides combinations that directly complement each of the 'outfits' in the order they are listed. Give optimal and relevant body type recommendations. Provide appropriate seasonal tips.The color recommendations must be based on the skin tone
+    Ensure : Try to avoid same response,Provide latest and relevant response, short, to-the-point suggestions. Ensure the 'accessories' array provides combinations that directly complement each of the 'outfits' in the order they are listed. Give optimal and relevant "seasonalTips" based on Occasion and Season,The "fabrics" and "layers" must be based on Occasion and Season. Provide appropriate "bodyTypeTips" based on Season and Ocassion, Also the array "tops" and "bottoms" must complement each other in the order they are listed.The "colorPalette" must be based on the Skin tone and Occasion.
   
     Based on:
     - Skin tone: ${skinTone}
