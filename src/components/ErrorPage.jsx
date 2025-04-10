@@ -6,15 +6,17 @@ const ErrorPage = () => {
       <div className="container mx-auto px-4 text-center">
         <div className="max-w-2xl mx-auto">
           <h1 className="h1 mb-4">404 - Page Not Found</h1>
+
           <p className="body-1 mb-8 text-n-2">
-            Oops! The page you're looking for doesn't exist or has been moved.
+            Looks like this path to Fashion Land doesn't exist. Let's get you
+            back on track!{" "}
           </p>
           <div className="flex justify-center">
             <Link
               to="/"
               className="button relative inline-flex items-center justify-center h-11 transition-colors hover:text-color-1 px-7"
             >
-              Go Back Home
+              Continue your journey
             </Link>
           </div>
         </div>
