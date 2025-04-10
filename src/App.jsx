@@ -13,7 +13,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./store/AuthContext";
 import { Routes, Route } from "react-router-dom";
 import RasaAiContextProvider from "./store/RasaAiContext";
-import DeveloperCredit from "./components/DeveloperCredit";
+// import DeveloperCredit from "./components/DeveloperCredit";
+import ErrorPage from "./components/ErrorPage";
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
               </>
             }
           />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
         <SpeedInsights />
       </div>
