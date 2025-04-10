@@ -42,7 +42,7 @@ const App = () => {
                 <Collaboration />
                 <HowToUse />
                 <Pricing />
-                <DeveloperCredit />
+                {/* <DeveloperCredit /> */}
               </>
             }
           />
