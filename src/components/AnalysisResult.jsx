@@ -1,7 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { RasaAiCTX } from "../store/RasaAiContext";
 import { useTextToSpeech, SpeechButton } from "./TextToSpeech.jsx";
 import OutfitImageModal from "./OutfitImageModal";
+import ColorPreview from "./ColorPreview";
+import { ColorService } from "../utils/ColorService";
 
 const AnalysisResult = () => {
   const {
@@ -13,6 +15,25 @@ const AnalysisResult = () => {
     setSelectedOutfitImage,
   } = useContext(RasaAiCTX);
   const { speak, stopSpeaking, isSpeaking } = useTextToSpeech();
+  const [hoveredColor, setHoveredColor] = useState(null);
+  const [colorHexMap, setColorHexMap] = useState({});
+
+  // Fetch all colors when analysis result loads
+  useEffect(() => {
+    if (!analysisResult?.recommendations?.colorPalette) return;
+
+    const allColors = [
+      ...(analysisResult.recommendations.colorPalette.recommended || []),
+      ...(analysisResult.recommendations.colorPalette.avoid || []),
+      ...(analysisResult.recommendations.colorPalette.neutrals || []),
+    ].map((color) =>
+      typeof color === "string" ? color : color.name || "Color"
+    );
+
+    ColorService.fetchColorHexCodes(allColors).then((hexMap) =>
+      setColorHexMap(hexMap)
+    );
+  }, [analysisResult]);
 
   // Handle outfit click
   const handleOutfitClick = (outfit) => {
@@ -195,20 +216,34 @@ const AnalysisResult = () => {
                   ></span>
                   Recommended Colors
                 </h5>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 relative">
                   {(
                     analysisResult.recommendations.colorPalette?.recommended ||
                     []
-                  ).map((color, index) => (
-                    <span
-                      key={index}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium bg-gradient-to-r ${currentGenderStyle.color} text-n-1 shadow-md`}
-                    >
-                      {typeof color === "string"
-                        ? color
-                        : color.name || "Color"}
-                    </span>
-                  ))}
+                  ).map((color, index) => {
+                    const colorName =
+                      typeof color === "string" ? color : color.name || "Color";
+                    return (
+                      <div
+                        key={index}
+                        className="relative"
+                        onMouseEnter={() => setHoveredColor(colorName)}
+                        onMouseLeave={() => setHoveredColor(null)}
+                      >
+                        <span
+                          className={`px-3 py-1.5 rounded-lg text-sm font-medium bg-gradient-to-r ${currentGenderStyle.color} text-n-1 shadow-md cursor-pointer`}
+                        >
+                          {colorName}
+                        </span>
+                        {hoveredColor === colorName && (
+                          <ColorPreview
+                            colorName={colorName}
+                            colorHex={colorHexMap[colorName]}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -218,19 +253,31 @@ const AnalysisResult = () => {
                   <span className="w-3 h-3 rounded-full bg-n-5"></span>
                   Colors to Avoid
                 </h5>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 relative">
                   {(
                     analysisResult.recommendations.colorPalette?.avoid || []
-                  ).map((color, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1.5 bg-n-6 rounded-lg text-n-1 text-sm font-medium border border-n-5 shadow-sm"
-                    >
-                      {typeof color === "string"
-                        ? color
-                        : color.name || "Color"}
-                    </span>
-                  ))}
+                  ).map((color, index) => {
+                    const colorName =
+                      typeof color === "string" ? color : color.name || "Color";
+                    return (
+                      <div
+                        key={index}
+                        className="relative"
+                        onMouseEnter={() => setHoveredColor(colorName)}
+                        onMouseLeave={() => setHoveredColor(null)}
+                      >
+                        <span className="px-3 py-1.5 bg-n-6 rounded-lg text-n-1 text-sm font-medium border border-n-5 shadow-sm cursor-pointer">
+                          {colorName}
+                        </span>
+                        {hoveredColor === colorName && (
+                          <ColorPreview
+                            colorName={colorName}
+                            colorHex={colorHexMap[colorName]}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -240,19 +287,31 @@ const AnalysisResult = () => {
                   <span className="w-3 h-3 rounded-full bg-n-4"></span>
                   Best Neutrals
                 </h5>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 relative">
                   {(
                     analysisResult.recommendations.colorPalette?.neutrals || []
-                  ).map((color, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1.5 bg-n-5 rounded-lg text-n-1 text-sm font-medium shadow-sm"
-                    >
-                      {typeof color === "string"
-                        ? color
-                        : color.name || "Color"}
-                    </span>
-                  ))}
+                  ).map((color, index) => {
+                    const colorName =
+                      typeof color === "string" ? color : color.name || "Color";
+                    return (
+                      <div
+                        key={index}
+                        className="relative"
+                        onMouseEnter={() => setHoveredColor(colorName)}
+                        onMouseLeave={() => setHoveredColor(null)}
+                      >
+                        <span className="px-3 py-1.5 bg-n-5 rounded-lg text-n-1 text-sm font-medium shadow-sm cursor-pointer">
+                          {colorName}
+                        </span>
+                        {hoveredColor === colorName && (
+                          <ColorPreview
+                            colorName={colorName}
+                            colorHex={colorHexMap[colorName]}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
