@@ -30,6 +30,10 @@ export const RasaAiCTX = createContext({
   fetchOutfitImage: () => {},
   selectedOutfitImage: null,
   setSelectedOutfitImage: () => {},
+  accessoryImages: {},
+  fetchAccessoryImage: () => {},
+  selectedAccessoryImage: null,
+  setSelectedAccessoryImage: () => {},
 });
 
 export default function RasaAiContextProvider({ children }) {
@@ -52,6 +56,8 @@ export default function RasaAiContextProvider({ children }) {
   const fileInputRef = useRef(null);
   const [outfitImages, setOutfitImages] = useState({});
   const [selectedOutfitImage, setSelectedOutfitImage] = useState(null);
+  const [accessoryImages, setAccessoryImages] = useState({});
+  const [selectedAccessoryImage, setSelectedAccessoryImage] = useState(null);
 
   const fetchOutfitImage = async (outfitName) => {
     // Check if we already have this image cached
@@ -91,6 +97,47 @@ export default function RasaAiContextProvider({ children }) {
       }
     } catch (err) {
       console.error("Failed to fetch outfit image:", err);
+    }
+  };
+
+  const fetchAccessoryImage = async (accessoryName) => {
+    // Check if we already have this image cached
+    if (accessoryImages[accessoryName]) return;
+
+    const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
+    if (!apiKey) {
+      console.error("Pexels API key not found");
+      return;
+    }
+
+    try {
+      const accessoryQuery = `${accessoryName} fashion accessory`;
+      const response = await fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+          accessoryQuery
+        )}&per_page=1`,
+        {
+          headers: {
+            Authorization: apiKey,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Pexels API request failed with status ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+      if (data.photos && data.photos.length > 0) {
+        setAccessoryImages((prev) => ({
+          ...prev,
+          [accessoryName]: data.photos[0].src.medium,
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch accessory image:", err);
     }
   };
 
@@ -377,6 +424,10 @@ export default function RasaAiContextProvider({ children }) {
     fetchOutfitImage,
     selectedOutfitImage,
     setSelectedOutfitImage,
+    accessoryImages,
+    fetchAccessoryImage,
+    selectedAccessoryImage,
+    setSelectedAccessoryImage,
   };
 
   return (
