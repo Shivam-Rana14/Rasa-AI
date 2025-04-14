@@ -1,4 +1,3 @@
-// utils/ColorService.js
 export class ColorService {
   static colorCache = new Map();
 

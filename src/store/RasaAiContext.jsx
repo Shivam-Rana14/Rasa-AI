@@ -237,7 +237,7 @@ export default function RasaAiContextProvider({ children }) {
 
     try {
       // Simulate skin tone analysis (1-4)
-      const skinTone = Math.floor(Math.random() * 4) + 1;
+      const skinTone = await getActualSkinTone(image);
 
       // Generate prompt for Gemini API
       const prompt = generateGeminiPrompt(skinTone, preferences);
@@ -257,6 +257,94 @@ export default function RasaAiContextProvider({ children }) {
       setIsAnalyzing(false);
       setShowPreferences(false);
     }
+  };
+
+  // New helper function for actual skin tone analysis
+  const getActualSkinTone = (imageFile) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      img.onload = () => {
+        try {
+          // Set canvas dimensions
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          // Get face region (simplified - assumes face is in center)
+          const faceRegion = {
+            x: img.width / 2 - (img.width * 0.3) / 2,
+            y: img.height / 2 - (img.height * 0.3) / 2,
+            width: img.width * 0.3,
+            height: img.height * 0.3,
+          };
+
+          // Sample skin pixels from face region
+          const skinPixels = [];
+          const imageData = ctx.getImageData(
+            faceRegion.x,
+            faceRegion.y,
+            faceRegion.width,
+            faceRegion.height
+          );
+          const data = imageData.data;
+
+          // Sample every 5th pixel for performance
+          for (let i = 0; i < data.length; i += 20) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            // Basic skin color detection (adjust thresholds as needed)
+            if (r > 100 && g > 50 && b > 50 && r > g && r > b) {
+              skinPixels.push([r, g, b]);
+            }
+          }
+
+          if (skinPixels.length === 0) {
+            throw new Error("Could not detect skin in the image");
+          }
+
+          // Calculate average skin color
+          const avgColor = skinPixels.reduce(
+            (acc, [r, g, b]) => {
+              acc.r += r;
+              acc.g += g;
+              acc.b += b;
+              return acc;
+            },
+            { r: 0, g: 0, b: 0 }
+          );
+
+          avgColor.r = Math.round(avgColor.r / skinPixels.length);
+          avgColor.g = Math.round(avgColor.g / skinPixels.length);
+          avgColor.b = Math.round(avgColor.b / skinPixels.length);
+
+          // Classify on Fitzpatrick scale (1-7)
+          const luminance =
+            (0.2126 * avgColor.r + 0.7152 * avgColor.g + 0.0722 * avgColor.b) /
+            255;
+
+          let skinTone;
+          if (luminance < 0.08) skinTone = 7; // Very dark
+          else if (luminance < 0.15) skinTone = 6; // Dark brown
+          else if (luminance < 0.25) skinTone = 5; // Brown
+          else if (luminance < 0.35) skinTone = 4; // Olive
+          else if (luminance < 0.5) skinTone = 3; // Medium
+          else if (luminance < 0.7) skinTone = 2; // Fair
+          else skinTone = 1; // Very fair
+
+          resolve(skinTone);
+        } catch (err) {
+          reject(err);
+        }
+      };
+
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = URL.createObjectURL(imageFile);
+    });
   };
 
   const generateGeminiPrompt = (skinTone, preferences) => {

@@ -3,7 +3,7 @@ import { RasaAiCTX } from "../store/RasaAiContext";
 import { useTextToSpeech, SpeechButton } from "./TextToSpeech.jsx";
 import OutfitImageModal from "./OutfitImageModal";
 import ColorPreview from "./ColorPreview";
-import { ColorService } from "../utils/ColorService";
+import { ColorService } from "../utils/colorService";
 
 const AnalysisResult = () => {
   const {
