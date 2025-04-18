@@ -251,8 +251,7 @@ export default function RasaAiContextProvider({ children }) {
         recommendations,
       });
     } catch (err) {
-      setError("Failed to get recommendations. Please try again.");
-      console.error("Gemini API error:", err);
+      setError("Failed to analyse skin tone. Please try again.");
     } finally {
       setIsAnalyzing(false);
       setShowPreferences(false);
