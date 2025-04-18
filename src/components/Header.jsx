@@ -67,7 +67,6 @@ const Header = () => {
   }, [scrollAfterNavigation]);
 
   const scrollToFunc = function (url) {
-    console.log("Scrolling");
     const element = document.querySelector(url);
     if (element) {
       const headerHeight = headerRef.current?.offsetHeight || 0;
@@ -85,7 +84,6 @@ const Header = () => {
     if (e) {
       e.preventDefault();
     }
-    console.log(url);
 
     if (url) {
       if (url.startsWith("#")) {

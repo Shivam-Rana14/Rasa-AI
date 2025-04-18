@@ -42,67 +42,69 @@ const RasaAI = () => {
                 </div>
               )}
 
-              <div className="flex flex-col items-center">
-                {showCamera ? (
-                  <CameraInterface />
-                ) : showPreferences ? (
-                  <PreferencesForm />
-                ) : previewUrl ? (
-                  analysisResult ? (
-                    <AnalysisResult />
+              {!isAnalyzing && (
+                <div className="flex flex-col items-center">
+                  {showCamera ? (
+                    <CameraInterface />
+                  ) : showPreferences ? (
+                    <PreferencesForm />
+                  ) : previewUrl ? (
+                    analysisResult ? (
+                      <AnalysisResult />
+                    ) : (
+                      <div className="w-full">
+                        <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-n-6 to-n-7 aspect-[4/3] max-w-3xl mx-auto">
+                          <img
+                            src={previewUrl}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-n-8/80 to-transparent" />
+                        </div>
+                        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+                          <button
+                            onClick={() => setShowPreferences(true)}
+                            className="px-8 py-3.5 bg-gradient-to-r from-color-1 to-color-2 rounded-xl text-n-8 font-medium hover:opacity-90 transition-opacity shadow-lg"
+                          >
+                            Continue
+                          </button>
+                          <button
+                            onClick={resetAll}
+                            className="px-8 py-3.5 bg-n-6 rounded-xl text-n-1 font-medium hover:bg-n-5 transition-colors border border-n-5"
+                          >
+                            Start Over
+                          </button>
+                        </div>
+                      </div>
+                    )
                   ) : (
-                    <div className="w-full">
-                      <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-n-6 to-n-7 aspect-[4/3] max-w-3xl mx-auto">
-                        <img
-                          src={previewUrl}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-n-8/80 to-transparent" />
-                      </div>
-                      <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-                        <button
-                          onClick={() => setShowPreferences(true)}
-                          className="px-8 py-3.5 bg-gradient-to-r from-color-1 to-color-2 rounded-xl text-n-8 font-medium hover:opacity-90 transition-opacity shadow-lg"
-                        >
-                          Continue
-                        </button>
-                        <button
-                          onClick={resetAll}
-                          className="px-8 py-3.5 bg-n-6 rounded-xl text-n-1 font-medium hover:bg-n-5 transition-colors border border-n-5"
-                        >
-                          Start Over
-                        </button>
-                      </div>
-                    </div>
-                  )
-                ) : (
-                  <ImageUpload />
-                )}
+                    <ImageUpload />
+                  )}
 
-                {isAnalyzing && (
-                  <div className="text-center text-n-3 my-8 space-y-2 animate-pulse">
-                    <p className="text-xl font-medium">
-                      Analyzing your skin tone...
-                    </p>
-                    <p>Generating personalized recommendations just for you</p>
-                    <div className="mt-4 flex justify-center">
-                      <div className="h-2 w-48 bg-n-6 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-color-1 to-color-2 animate-progress" />
-                      </div>
+                  {analysisResult && (
+                    <button
+                      onClick={resetAll}
+                      className="mt-8 px-8 py-3.5 bg-n-6 rounded-xl text-n-1 font-medium hover:bg-n-5 transition-colors border border-n-5 shadow-sm"
+                    >
+                      Start New Analysis
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {isAnalyzing && (
+                <div className="text-center text-n-3 my-8 space-y-2 animate-pulse">
+                  <p className="text-xl font-medium">
+                    Analyzing your skin tone...
+                  </p>
+                  <p>Generating personalized recommendations just for you</p>
+                  <div className="mt-4 flex justify-center">
+                    <div className="h-2 w-48 bg-n-6 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-color-1 to-color-2 animate-progress" />
                     </div>
                   </div>
-                )}
-
-                {analysisResult && (
-                  <button
-                    onClick={resetAll}
-                    className="mt-8 px-8 py-3.5 bg-n-6 rounded-xl text-n-1 font-medium hover:bg-n-5 transition-colors border border-n-5 shadow-sm"
-                  >
-                    Start New Analysis
-                  </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
