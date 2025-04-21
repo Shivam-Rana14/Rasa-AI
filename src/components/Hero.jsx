@@ -46,9 +46,9 @@ const Hero = () => {
               Get started
             </Button>
           ) : (
-            <p className="body-1 max-w-3xl mx-auto mb-6 text-n-2 lg:mb-8">
-              Login To Get Started
-            </p>
+            <Button href="/signIn" white>
+              Login to get started
+            </Button>
           )}
         </div>
         <div className="relative max-w-[23rem] mx-auto md:max-w-5xl xl:mb-24">
