@@ -108,6 +108,7 @@ const addAnalysisReport = async (req, res) => {
     const collection = client.db(DB_NAME).collection('users');
     const userEmail = req.user.email;
     const report = req.body.report; // Expecting report object in body
+    console.log('[addAnalysisReport] userEmail:', userEmail, 'report:', report);
     if (!report) {
       client.close();
       return res.status(400).json({ message: 'No report provided' });
@@ -116,13 +117,14 @@ const addAnalysisReport = async (req, res) => {
       { email: userEmail },
       { $push: { analysisReports: report } }
     );
+    console.log('[addAnalysisReport] MongoDB update result:', result);
     client.close();
     if (result.modifiedCount === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ message: 'Analysis report added' });
   } catch (error) {
-    console.error('Add analysis report error:', error);
+    console.error('[addAnalysisReport] Error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

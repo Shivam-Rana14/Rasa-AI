@@ -1,4 +1,5 @@
 import { createContext, useState, useRef } from "react";
+import { BACKEND_URL } from "../env";
 
 export const RasaAiCTX = createContext({
   image: null,
@@ -65,7 +66,7 @@ export default function RasaAiContextProvider({ children }) {
 
     const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
     if (!apiKey) {
-      console.error("Pexels API key not found");
+      setError("Pexels API key not found");
       return;
     }
 
@@ -96,7 +97,7 @@ export default function RasaAiContextProvider({ children }) {
         }));
       }
     } catch (err) {
-      console.error("Failed to fetch outfit image:", err);
+      setError("Failed to fetch outfit image");
     }
   };
 
@@ -106,7 +107,7 @@ export default function RasaAiContextProvider({ children }) {
 
     const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
     if (!apiKey) {
-      console.error("Pexels API key not found");
+      setError("Pexels API key not found");
       return;
     }
 
@@ -137,7 +138,7 @@ export default function RasaAiContextProvider({ children }) {
         }));
       }
     } catch (err) {
-      console.error("Failed to fetch accessory image:", err);
+      setError("Failed to fetch accessory image");
     }
   };
 
@@ -462,11 +463,9 @@ export default function RasaAiContextProvider({ children }) {
           },
         };
       } catch (parseError) {
-        console.error("Failed to parse response:", textContent);
         throw new Error("Could not parse recommendations from Gemini");
       }
     } catch (err) {
-      console.error("Gemini API request failed:", err);
       throw new Error("Failed to connect to recommendation service");
     }
   };
@@ -475,7 +474,7 @@ export default function RasaAiContextProvider({ children }) {
   const saveAnalysisReport = async (report) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch("/api/auth/analysis-report", {
+      const response = await fetch(`${BACKEND_URL}/api/auth/analysis-report`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -483,16 +482,28 @@ export default function RasaAiContextProvider({ children }) {
         },
         body: JSON.stringify({ report }),
       });
+      const resData = await response.json();
+      if (!response.ok) {
+        throw new Error(resData.message || "Failed to save analysis report");
+      }
     } catch (err) {
-      console.error("Failed to save analysis report:", err);
+      throw new Error("Failed to save analysis report");
     }
   };
 
   // Wrap setAnalysisResult to also save the report
   const setAnalysisResultAndSave = (result) => {
-    setAnalysisResult(result);
-    if (result) {
-      saveAnalysisReport({ ...result, date: new Date().toISOString() });
+    // Defensive: ensure colorPalette is always present and arrays
+    let safeResult = { ...result };
+    if (!safeResult.recommendations) safeResult.recommendations = {};
+    if (!safeResult.recommendations.colorPalette) safeResult.recommendations.colorPalette = {};
+    const cp = safeResult.recommendations.colorPalette;
+    cp.recommended = Array.isArray(cp.recommended) ? cp.recommended : [];
+    cp.avoid = Array.isArray(cp.avoid) ? cp.avoid : [];
+    cp.neutrals = Array.isArray(cp.neutrals) ? cp.neutrals : [];
+    setAnalysisResult(safeResult);
+    if (safeResult) {
+      saveAnalysisReport({ ...safeResult, date: new Date().toISOString() });
     }
   };
 

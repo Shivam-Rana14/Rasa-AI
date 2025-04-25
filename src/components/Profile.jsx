@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Section from "./Section";
 import LoadingSpinner from "./LoadingSpinner";
 import Notification from "./Notification";
+import ReportCard from "./ReportCard";
+import { BACKEND_URL } from "../env";
 
 const Profile = () => {
   const [reports, setReports] = useState([]);
@@ -14,7 +16,7 @@ const Profile = () => {
       setError(null);
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/auth/analysis-reports", {
+        const res = await fetch(`${BACKEND_URL}/api/auth/analysis-reports`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -55,22 +57,7 @@ const Profile = () => {
               {!loading && !error && reports.length > 0 && (
                 <div className="space-y-6">
                   {reports.map((report, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-xl bg-n-8/70 border border-n-6 shadow"
-                    >
-                      <div className="font-semibold text-n-1 mb-2">
-                        Analysis #{reports.length - idx}
-                      </div>
-                      <pre className="text-n-2 whitespace-pre-wrap break-words text-sm">
-                        {typeof report === "string"
-                          ? report
-                          : JSON.stringify(report, null, 2)}
-                      </pre>
-                      <div className="text-xs text-n-4 mt-2">
-                        {report.date ? `Date: ${new Date(report.date).toLocaleString()}` : null}
-                      </div>
-                    </div>
+                    <ReportCard key={idx} report={report} idx={idx} total={reports.length} />
                   ))}
                 </div>
               )}
