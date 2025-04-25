@@ -1,5 +1,4 @@
 import { createContext, useState, useRef } from "react";
-import { useAuth } from "../store/AuthContext"; // Import useAuth to get user
 
 export const RasaAiCTX = createContext({
   image: null,
@@ -59,8 +58,6 @@ export default function RasaAiContextProvider({ children }) {
   const [selectedOutfitImage, setSelectedOutfitImage] = useState(null);
   const [accessoryImages, setAccessoryImages] = useState({});
   const [selectedAccessoryImage, setSelectedAccessoryImage] = useState(null);
-
-  const { user } = useAuth(); // Get user from AuthContext
 
   const fetchOutfitImage = async (outfitName) => {
     // Check if we already have this image cached
@@ -248,22 +245,11 @@ export default function RasaAiContextProvider({ children }) {
       // Call Gemini API
       const recommendations = await getGeminiRecommendations(prompt);
 
-      const analysis = {
+      setAnalysisResult({
         skinTone,
         preferences: { ...preferences },
         recommendations,
-      };
-      setAnalysisResult(analysis);
-
-      // Automatically save report to backend if user is logged in
-      const storedUser = user || JSON.parse(localStorage.getItem("user"));
-      if (storedUser && storedUser._id) {
-        fetch(`https://rasa-ai.onrender.com/api/profile/${storedUser._id}/report`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ report: analysis }),
-        });
-      }
+      });
     } catch (err) {
       setError("Failed to analyse skin tone. Please try again.");
     } finally {
