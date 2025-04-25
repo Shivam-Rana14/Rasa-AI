@@ -10,6 +10,7 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import RasaAI from "./components/RasaAI";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Profile from "./components/Profile";
 import { AuthProvider } from "./store/AuthContext";
 import { Routes, Route } from "react-router-dom";
 import RasaAiContextProvider from "./store/RasaAiContext";
@@ -34,6 +35,14 @@ const App = () => {
           />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/"
             element={

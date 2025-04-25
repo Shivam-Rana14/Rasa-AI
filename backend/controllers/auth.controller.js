@@ -30,6 +30,7 @@ const signup = async (req, res) => {
       password: hashedPassword,
       name: req.body.name,
       createdAt: new Date(),
+      analysisReports: [], // Initialize analysisReports array
     };
 
     await collection.insertOne(newUser);
@@ -86,7 +87,69 @@ const signin = async (req, res) => {
   }
 };
 
+// Middleware to verify JWT and extract user email
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
+// Add analysis report for the authenticated user
+const addAnalysisReport = async (req, res) => {
+  let client;
+  try {
+    client = await MongoClient.connect(MONGODB_URI);
+    const collection = client.db(DB_NAME).collection('users');
+    const userEmail = req.user.email;
+    const report = req.body.report; // Expecting report object in body
+    if (!report) {
+      client.close();
+      return res.status(400).json({ message: 'No report provided' });
+    }
+    const result = await collection.updateOne(
+      { email: userEmail },
+      { $push: { analysisReports: report } }
+    );
+    client.close();
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ message: 'Analysis report added' });
+  } catch (error) {
+    console.error('Add analysis report error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Get all analysis reports for the authenticated user
+const getAnalysisReports = async (req, res) => {
+  let client;
+  try {
+    client = await MongoClient.connect(MONGODB_URI);
+    const collection = client.db(DB_NAME).collection('users');
+    const userEmail = req.user.email;
+    const user = await collection.findOne({ email: userEmail });
+    client.close();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ analysisReports: user.analysisReports || [] });
+  } catch (error) {
+    console.error('Get analysis reports error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
   signup,
   signin,
+  authenticate, // Export middleware
+  addAnalysisReport,
+  getAnalysisReports,
 };

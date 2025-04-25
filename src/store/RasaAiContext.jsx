@@ -245,7 +245,7 @@ export default function RasaAiContextProvider({ children }) {
       // Call Gemini API
       const recommendations = await getGeminiRecommendations(prompt);
 
-      setAnalysisResult({
+      setAnalysisResultAndSave({
         skinTone,
         preferences: { ...preferences },
         recommendations,
@@ -471,6 +471,31 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
+  // Save analysis report to backend
+  const saveAnalysisReport = async (report) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch("/api/auth/analysis-report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ report }),
+      });
+    } catch (err) {
+      console.error("Failed to save analysis report:", err);
+    }
+  };
+
+  // Wrap setAnalysisResult to also save the report
+  const setAnalysisResultAndSave = (result) => {
+    setAnalysisResult(result);
+    if (result) {
+      saveAnalysisReport({ ...result, date: new Date().toISOString() });
+    }
+  };
+
   const resetAll = () => {
     stopCamera();
     setImage(null);
@@ -515,6 +540,7 @@ export default function RasaAiContextProvider({ children }) {
     fetchAccessoryImage,
     selectedAccessoryImage,
     setSelectedAccessoryImage,
+    setAnalysisResult: setAnalysisResultAndSave,
   };
 
   return (
