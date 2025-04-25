@@ -59,6 +59,8 @@ const getColorPaletteFromReport = (report) => {
 };
 
 const ReportCard = ({ report, idx, total }) => {
+  const [collapsed, setCollapsed] = useState(true);
+
   if (!report || typeof report !== "object")
     return <div className="text-n-3">Invalid report format</div>;
 
@@ -96,66 +98,87 @@ const ReportCard = ({ report, idx, total }) => {
   };
 
   return (
-    <div className="rounded-2xl border border-n-6 bg-gradient-to-br from-n-7/80 to-n-8/90 shadow-2xl p-6 md:p-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-        <div className="text-xl font-bold text-n-1">
-          Analysis #{total - idx}
-        </div>
-        <div className="text-xs text-n-4 mt-1 md:mt-0">
-          {date ? `Date: ${new Date(date).toLocaleString()}` : null}
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-4 mb-4">
-        {tags.map(
-          (tag, i) =>
-            tag.value && (
-              <span key={tag.label} className={tagStyle}>
+    <div className="rounded-2xl border border-n-6 bg-gradient-to-br from-n-7/80 to-n-8/90 shadow-2xl p-0 md:p-0 mb-4">
+      {/* Collapsible Header */}
+      <button
+        className="w-full flex items-center justify-between px-6 py-4 cursor-pointer focus:outline-none bg-n-8/90 hover:bg-n-7/80 rounded-t-2xl"
+        onClick={() => setCollapsed((c) => !c)}
+        aria-expanded={!collapsed}
+      >
+        <div className="flex flex-col md:flex-row md:items-center md:gap-4">
+          <span className="text-xl font-bold text-n-1 mr-2">
+            Analysis #{total - idx}
+          </span>
+          <span className="text-xs text-n-4 mt-1 md:mt-0">
+            {date ? `Date: ${new Date(date).toLocaleString()}` : null}
+          </span>
+          {/* Show a couple of tags in header for context */}
+          <span className="hidden md:inline ml-2">
+            {tags.filter(t => t.value).slice(0,2).map((tag, i) => (
+              <span key={tag.label} className={tagStyle + ' mr-1'}>
                 {tag.label}: <span className="font-bold">{tag.value}</span>
               </span>
-            )
-        )}
-      </div>
-      <Collapsible title="Recommended Colors" defaultOpen={true}>
-        {renderColors(colorPalette.recommended, "recommended")}
-      </Collapsible>
-      <Collapsible title="Colors to Avoid" defaultOpen={true}>
-        {renderColors(colorPalette.avoid, "avoid")}
-      </Collapsible>
-      <Collapsible title="Neutrals" defaultOpen={true}>
-        {renderColors(colorPalette.neutrals, "neutrals")}
-      </Collapsible>
-      <Collapsible title="Outfit Recommendations">
-        <ul className="list-disc ml-5 text-n-2">
-          {outfits.map((o, i) => (
-            <li key={i}>{typeof o === "string" ? o : o?.name || JSON.stringify(o)}</li>
-          ))}
-        </ul>
-      </Collapsible>
-      <Collapsible title="Accessory Suggestions">
-        <ul className="list-disc ml-5 text-n-2">
-          {accessories.map((a, i) => (
-            <li key={i}>{typeof a === "string" ? a : a?.name || JSON.stringify(a)}</li>
-          ))}
-        </ul>
-      </Collapsible>
-      <Collapsible title="Seasonal Tips">
-        <div className="text-n-2">
-          {Object.entries(seasonalTips).map(([season, tip], i) => (
-            <div key={i} className="mb-1">
-              <span className="font-semibold text-color-1">{season}:</span> {tip}
-            </div>
-          ))}
+            ))}
+          </span>
         </div>
-      </Collapsible>
-      <Collapsible title="Body Type Tips">
-        <div className="text-n-2">
-          {Object.entries(bodyTypeTips).map(([type, tip], i) => (
-            <div key={i} className="mb-1">
-              <span className="font-semibold text-color-1">{type}:</span> {tip}
+        <span className="text-lg text-color-1">{collapsed ? "►" : "▼"}</span>
+      </button>
+      {/* Collapsible Content */}
+      {!collapsed && (
+        <div className="p-6 md:p-8 pt-2">
+          <div className="flex flex-wrap gap-4 mb-4">
+            {tags.map(
+              (tag, i) =>
+                tag.value && (
+                  <span key={tag.label} className={tagStyle}>
+                    {tag.label}: <span className="font-bold">{tag.value}</span>
+                  </span>
+                )
+            )}
+          </div>
+          <Collapsible title="Recommended Colors" defaultOpen={true}>
+            {renderColors(colorPalette.recommended, "recommended")}
+          </Collapsible>
+          <Collapsible title="Colors to Avoid" defaultOpen={true}>
+            {renderColors(colorPalette.avoid, "avoid")}
+          </Collapsible>
+          <Collapsible title="Neutrals" defaultOpen={true}>
+            {renderColors(colorPalette.neutrals, "neutrals")}
+          </Collapsible>
+          <Collapsible title="Outfit Recommendations">
+            <ul className="list-disc ml-5 text-n-2">
+              {outfits.map((o, i) => (
+                <li key={i}>{typeof o === "string" ? o : o?.name || JSON.stringify(o)}</li>
+              ))}
+            </ul>
+          </Collapsible>
+          <Collapsible title="Accessory Suggestions">
+            <ul className="list-disc ml-5 text-n-2">
+              {accessories.map((a, i) => (
+                <li key={i}>{typeof a === "string" ? a : a?.name || JSON.stringify(a)}</li>
+              ))}
+            </ul>
+          </Collapsible>
+          <Collapsible title="Seasonal Tips">
+            <div className="text-n-2">
+              {Object.entries(seasonalTips).map(([season, tip], i) => (
+                <div key={i} className="mb-1">
+                  <span className="font-semibold text-color-1">{season}:</span> {tip}
+                </div>
+              ))}
             </div>
-          ))}
+          </Collapsible>
+          <Collapsible title="Body Type Tips">
+            <div className="text-n-2">
+              {Object.entries(bodyTypeTips).map(([type, tip], i) => (
+                <div key={i} className="mb-1">
+                  <span className="font-semibold text-color-1">{type}:</span> {tip}
+                </div>
+              ))}
+            </div>
+          </Collapsible>
         </div>
-      </Collapsible>
+      )}
     </div>
   );
 };
