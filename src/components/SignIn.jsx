@@ -135,14 +135,6 @@ const SignIn = () => {
                   ? "Please wait this request can take upto 2 minutes due to high traffic on our servers"
                   : "Sign In"}
               </Button>
-              <div className="flex flex-col items-center">
-                <p className="mb-3 mt-3 text-color-1">OR</p>
-                <p>
-                  <Button href="/signUp" white>
-                    Create new account
-                  </Button>
-                </p>
-              </div>
             </form>
           </div>
         </div>
