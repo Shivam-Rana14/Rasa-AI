@@ -1,5 +1,4 @@
 import { createContext, useState, useRef } from "react";
-import { BACKEND_URL } from "../env";
 
 export const RasaAiCTX = createContext({
   image: null,
@@ -474,6 +473,7 @@ export default function RasaAiContextProvider({ children }) {
   const saveAnalysisReport = async (report) => {
     try {
       const token = localStorage.getItem("token");
+      const BACKEND_URL = import.meta.env.VITE_API_URL;
       const response = await fetch(`${BACKEND_URL}/api/auth/analysis-report`, {
         method: "POST",
         headers: {
@@ -496,7 +496,8 @@ export default function RasaAiContextProvider({ children }) {
     // Defensive: ensure colorPalette is always present and arrays
     let safeResult = { ...result };
     if (!safeResult.recommendations) safeResult.recommendations = {};
-    if (!safeResult.recommendations.colorPalette) safeResult.recommendations.colorPalette = {};
+    if (!safeResult.recommendations.colorPalette)
+      safeResult.recommendations.colorPalette = {};
     const cp = safeResult.recommendations.colorPalette;
     cp.recommended = Array.isArray(cp.recommended) ? cp.recommended : [];
     cp.avoid = Array.isArray(cp.avoid) ? cp.avoid : [];

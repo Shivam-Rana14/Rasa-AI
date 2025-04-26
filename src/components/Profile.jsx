@@ -3,7 +3,6 @@ import Section from "./Section";
 import LoadingSpinner from "./LoadingSpinner";
 import Notification from "./Notification";
 import ReportCard from "./ReportCard";
-import { BACKEND_URL } from "../env";
 
 const Profile = () => {
   const [reports, setReports] = useState([]);
@@ -16,6 +15,7 @@ const Profile = () => {
       setError(null);
       try {
         const token = localStorage.getItem("token");
+        const BACKEND_URL = import.meta.env.VITE_API_URL;
         const res = await fetch(`${BACKEND_URL}/api/auth/analysis-reports`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,12 +52,19 @@ const Profile = () => {
               {loading && <LoadingSpinner />}
               {error && <Notification message={error} type="error" />}
               {!loading && !error && reports.length === 0 && (
-                <div className="text-n-3 text-center">No analysis reports found.</div>
+                <div className="text-n-3 text-center">
+                  No analysis reports found.
+                </div>
               )}
               {!loading && !error && reports.length > 0 && (
                 <div className="space-y-6">
                   {reports.map((report, idx) => (
-                    <ReportCard key={idx} report={report} idx={idx} total={reports.length} />
+                    <ReportCard
+                      key={idx}
+                      report={report}
+                      idx={idx}
+                      total={reports.length}
+                    />
                   ))}
                 </div>
               )}
