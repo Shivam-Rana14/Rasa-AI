@@ -58,7 +58,7 @@ const getColorPaletteFromReport = (report) => {
   return { recommended: [], avoid: [], neutrals: [] };
 };
 
-const ReportCard = ({ report, idx, total, onDelete, deleting }) => {
+const ReportCard = ({ report, idx, total }) => {
   const [collapsed, setCollapsed] = useState(true);
 
   if (!report || typeof report !== "object")
@@ -126,19 +126,6 @@ const ReportCard = ({ report, idx, total, onDelete, deleting }) => {
       {/* Collapsible Content */}
       {!collapsed && (
         <div className="p-6 md:p-8 pt-2">
-          {/* Delete Button */}
-          {onDelete && (
-            <div className="flex justify-end mb-2">
-              <button
-                className={`px-4 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed`}
-                onClick={() => onDelete(report)}
-                disabled={deleting}
-                title="Delete this report"
-              >
-                {deleting ? "Deleting..." : "Delete Report"}
-              </button>
-            </div>
-          )}
           <div className="flex flex-wrap gap-4 mb-4">
             {tags.map(
               (tag, i) =>

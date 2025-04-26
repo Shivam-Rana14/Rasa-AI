@@ -148,49 +148,10 @@ const getAnalysisReports = async (req, res) => {
   }
 };
 
-// Delete analysis report for the authenticated user
-const deleteAnalysisReport = async (req, res) => {
-  let client;
-  try {
-    client = await MongoClient.connect(MONGODB_URI);
-    const collection = client.db(DB_NAME).collection('users');
-    const userEmail = req.user.email;
-    const reportId = req.params.id;
-
-    if (!reportId) {
-      client.close();
-      return res.status(400).json({ message: 'No report ID provided' });
-    }
-
-    // Remove the report by _id or date (support both for compatibility)
-    const result = await collection.updateOne(
-      { email: userEmail },
-      { $pull: {
-          analysisReports: {
-            $or: [
-              { _id: reportId },
-              { date: reportId }
-            ]
-          }
-        }
-      }
-    );
-    client.close();
-    if (result.modifiedCount === 0) {
-      return res.status(404).json({ message: 'Report not found or already deleted' });
-    }
-    res.status(200).json({ message: 'Analysis report deleted' });
-  } catch (error) {
-    console.error('[deleteAnalysisReport] Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
 module.exports = {
   signup,
   signin,
   authenticate, // Export middleware
   addAnalysisReport,
   getAnalysisReports,
-  deleteAnalysisReport,
 };
