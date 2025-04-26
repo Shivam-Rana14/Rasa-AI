@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { signup, signin, authenticate, addAnalysisReport, getAnalysisReports } = require('../controllers/auth.controller');
+const { signup, signin, authenticate, addAnalysisReport, getAnalysisReports, deleteAnalysisReport } = require('../controllers/auth.controller');
 
 router.post('/signup', signup);
 router.post('/signin', signin);
@@ -10,5 +10,8 @@ router.post('/analysis-report', authenticate, addAnalysisReport);
 
 // Get all analysis reports for the authenticated user
 router.get('/analysis-reports', authenticate, getAnalysisReports);
+
+// Delete an analysis report for the authenticated user
+router.delete('/analysis-reports/:id', authenticate, deleteAnalysisReport);
 
 module.exports = router;
