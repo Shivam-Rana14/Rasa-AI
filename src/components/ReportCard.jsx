@@ -58,7 +58,7 @@ const getColorPaletteFromReport = (report) => {
   return { recommended: [], avoid: [], neutrals: [] };
 };
 
-const ReportCard = ({ report, idx, total, onDelete }) => {
+const ReportCard = ({ report, idx, total }) => {
   const [collapsed, setCollapsed] = useState(true);
 
   if (!report || typeof report !== "object")
@@ -100,16 +100,9 @@ const ReportCard = ({ report, idx, total, onDelete }) => {
   return (
     <div className="rounded-2xl border border-n-6 bg-gradient-to-br from-n-7/80 to-n-8/90 shadow-2xl p-0 md:p-0 mb-4">
       {/* Collapsible Header */}
-      <div
-        role="button"
-        tabIndex={0}
+      <button
         className="w-full flex items-center justify-between px-6 py-4 cursor-pointer focus:outline-none bg-n-8/90 hover:bg-n-7/80 rounded-t-2xl"
         onClick={() => setCollapsed((c) => !c)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            setCollapsed((c) => !c);
-          }
-        }}
         aria-expanded={!collapsed}
       >
         <div className="flex flex-col md:flex-row md:items-center md:gap-4">
@@ -121,24 +114,15 @@ const ReportCard = ({ report, idx, total, onDelete }) => {
           </span>
           {/* Show a couple of tags in header for context */}
           <span className="hidden md:inline ml-2">
-            {tags.filter((t) => t.value).slice(0, 2).map((tag, i) => (
+            {tags.filter(t => t.value).slice(0,2).map((tag, i) => (
               <span key={tag.label} className={tagStyle + ' mr-1'}>
                 {tag.label}: <span className="font-bold">{tag.value}</span>
               </span>
             ))}
           </span>
-          {onDelete && (
-            <button
-              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
-              onClick={(e) => { e.stopPropagation(); onDelete(report._id); }}
-              title="Delete this report"
-            >
-              Delete
-            </button>
-          )}
         </div>
         <span className="text-lg text-color-1">{collapsed ? "►" : "▼"}</span>
-      </div>
+      </button>
       {/* Collapsible Content */}
       {!collapsed && (
         <div className="p-6 md:p-8 pt-2">

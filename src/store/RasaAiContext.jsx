@@ -474,7 +474,7 @@ export default function RasaAiContextProvider({ children }) {
     try {
       const token = localStorage.getItem("token");
       const BACKEND_URL = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${BACKEND_URL}/api/profile/analysis-report`, {
+      const response = await fetch(`${BACKEND_URL}/api/auth/analysis-report`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -152,5 +152,6 @@ module.exports = {
   signup,
   signin,
   authenticate, // Export middleware
-  // Removed addAnalysisReport and getAnalysisReports, now in profile.controller.js
+  addAnalysisReport,
+  getAnalysisReports,
 };
