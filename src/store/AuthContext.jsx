@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { getTokenExpiration, isTokenExpired } from "../utils/jwt";
 
 const AuthContext = createContext();
 
@@ -16,6 +17,26 @@ export const AuthProvider = ({ children }) => {
     }
     setLoading(false); // Set loading to false after checking session
   }, []);
+
+  // Auto logout logic
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    if (isTokenExpired(token)) {
+      signout();
+      return;
+    }
+    const exp = getTokenExpiration(token);
+    const timeout = exp - Date.now();
+    if (timeout > 0) {
+      const timer = setTimeout(() => {
+        signout();
+      }, timeout);
+      return () => clearTimeout(timer);
+    } else {
+      signout();
+    }
+  }, [user]);
 
   const signup = async (name, email, password) => {
     setLoading(true); // Set loading to true at the start
