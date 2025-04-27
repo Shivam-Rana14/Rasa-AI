@@ -11,10 +11,14 @@ exports.addAnalysisReport = async (req, res) => {
     client = await MongoClient.connect(MONGODB_URI);
     const collection = client.db(DB_NAME).collection('users');
     const userEmail = req.user.email;
-    const report = req.body.report; // Expecting report object in body
+    let report = req.body.report; // Expecting report object in body
     if (!report) {
       client.close();
       return res.status(400).json({ message: 'No report provided' });
+    }
+    // Ensure each report has a unique _id
+    if (!report._id) {
+      report._id = new ObjectId();
     }
     const result = await collection.updateOne(
       { email: userEmail },
@@ -24,7 +28,7 @@ exports.addAnalysisReport = async (req, res) => {
     if (result.modifiedCount === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json({ message: 'Analysis report added' });
+    res.status(200).json({ message: 'Analysis report added', _id: report._id });
   } catch (error) {
     console.error('[addAnalysisReport] Error:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -57,11 +61,22 @@ exports.deleteAnalysisReport = async (req, res) => {
     client = await MongoClient.connect(MONGODB_URI);
     const collection = client.db(DB_NAME).collection('users');
     const userEmail = req.user.email;
-    const { reportId } = req.params;
+    const { id } = req.params; // Use 'id' to match route param
+    if (!id) {
+      client.close();
+      return res.status(400).json({ message: 'Missing report ID' });
+    }
+    let objectId;
+    try {
+      objectId = new ObjectId(id);
+    } catch (e) {
+      client.close();
+      return res.status(400).json({ message: 'Invalid report ID' });
+    }
     // Remove the report with the matching _id from the user's analysisReports array
     const result = await collection.updateOne(
       { email: userEmail },
-      { $pull: { analysisReports: { _id: ObjectId(reportId) } } }
+      { $pull: { analysisReports: { _id: objectId } } }
     );
     client.close();
     if (result.modifiedCount === 0) {
@@ -69,6 +84,7 @@ exports.deleteAnalysisReport = async (req, res) => {
     }
     res.status(200).json({ message: 'Report deleted successfully' });
   } catch (err) {
+    if (client) client.close();
     console.error('[deleteAnalysisReport] Error:', err);
     res.status(500).json({ message: err.message });
   }

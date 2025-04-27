@@ -8,7 +8,7 @@ import ReportCard from "./ReportCard";
 const fetchReports = async () => {
   const token = localStorage.getItem("token");
   const BACKEND_URL = import.meta.env.VITE_API_URL;
-  const res = await fetch(`${BACKEND_URL}/api/auth/analysis-reports`, {
+  const res = await fetch(`${BACKEND_URL}/api/profile/analysis-reports`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -21,6 +21,10 @@ const fetchReports = async () => {
 };
 
 const deleteReport = async (reportId) => {
+  if (!reportId) {
+    console.warn("Attempted to delete a report with undefined _id");
+    return;
+  }
   const token = localStorage.getItem("token");
   const BACKEND_URL = import.meta.env.VITE_API_URL;
   const res = await fetch(`${BACKEND_URL}/api/profile/analysis-report/${reportId}`, {
