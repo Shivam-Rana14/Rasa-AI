@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const router = require('./routes/auth.routes');
+const profileRouter = require('./routes/profile.routes');
 const cors = require('cors');
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', router);
+app.use('/api/profile', profileRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

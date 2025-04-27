@@ -58,7 +58,7 @@ const getColorPaletteFromReport = (report) => {
   return { recommended: [], avoid: [], neutrals: [] };
 };
 
-const ReportCard = ({ report, idx, total }) => {
+const ReportCard = ({ report, idx, total, onDelete }) => {
   const [collapsed, setCollapsed] = useState(true);
 
   if (!report || typeof report !== "object")
@@ -120,6 +120,15 @@ const ReportCard = ({ report, idx, total }) => {
               </span>
             ))}
           </span>
+          {onDelete && (
+            <button
+              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+              onClick={() => onDelete(report._id)}
+              title="Delete this report"
+            >
+              Delete
+            </button>
+          )}
         </div>
         <span className="text-lg text-color-1">{collapsed ? "►" : "▼"}</span>
       </button>
