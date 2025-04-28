@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@tensorflow-models/blazeface": "^0.1.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "@vercel/speed-insights": "^1.2.0",
     "bcrypt": "^5.1.1",
     "canvas-confetti": "^1.9.3",

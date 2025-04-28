@@ -1,4 +1,6 @@
 import { createContext, useState, useRef } from "react";
+// import * as tf from '@tensorflow/tfjs';
+// import { getActualSkinTone } from '../utils/skinToneAnalysis'; // Adjust the path as needed
 
 // Context for Rasa AI state and actions
 export const RasaAiCTX = createContext({
@@ -60,6 +62,24 @@ export default function RasaAiContextProvider({ children }) {
   const [selectedOutfitImage, setSelectedOutfitImage] = useState(null);
   const [accessoryImages, setAccessoryImages] = useState({});
   const [selectedAccessoryImage, setSelectedAccessoryImage] = useState(null);
+
+
+
+  // useEffect(() => {
+  //   // This will ensure that TensorFlow.js tries to initialize when the component mounts
+  //   const initTensorflow = async () => {
+  //     try {
+  //       // Just loading TensorFlow is enough, the actual models will load when needed
+  //       await tf.ready();
+  //       console.log("TensorFlow.js initialized successfully");
+  //     } catch (err) {
+  //       console.error("Failed to initialize TensorFlow.js:", err);
+  //       setError("AI models initialization failed");
+  //     }
+  //   };
+    
+  //   initTensorflow();
+  // }, []);
 
   // Handles changes to user preferences
   // Called by: context consumers via handlePreferenceChange
