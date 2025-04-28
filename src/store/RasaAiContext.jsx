@@ -1,6 +1,6 @@
-import { createContext, useState, useRef } from "react";
-// import * as tf from '@tensorflow/tfjs';
-// import { getActualSkinTone } from '../utils/skinToneAnalysis'; // Adjust the path as needed
+import { createContext, useState, useRef, useEffect } from "react";
+import * as tf from "@tensorflow/tfjs";
+import { getActualSkinTone } from "../utils/skinToneAnalysis";
 
 // Context for Rasa AI state and actions
 export const RasaAiCTX = createContext({
@@ -63,23 +63,21 @@ export default function RasaAiContextProvider({ children }) {
   const [accessoryImages, setAccessoryImages] = useState({});
   const [selectedAccessoryImage, setSelectedAccessoryImage] = useState(null);
 
+  useEffect(() => {
+    // This will ensure that TensorFlow.js tries to initialize when the component mounts
+    const initTensorflow = async () => {
+      try {
+        // Just loading TensorFlow is enough, the actual models will load when needed
+        await tf.ready();
+        console.log("TensorFlow.js initialized successfully");
+      } catch (err) {
+        console.error("Failed to initialize TensorFlow.js:", err);
+        setError("AI models initialization failed");
+      }
+    };
 
-
-  // useEffect(() => {
-  //   // This will ensure that TensorFlow.js tries to initialize when the component mounts
-  //   const initTensorflow = async () => {
-  //     try {
-  //       // Just loading TensorFlow is enough, the actual models will load when needed
-  //       await tf.ready();
-  //       console.log("TensorFlow.js initialized successfully");
-  //     } catch (err) {
-  //       console.error("Failed to initialize TensorFlow.js:", err);
-  //       setError("AI models initialization failed");
-  //     }
-  //   };
-    
-  //   initTensorflow();
-  // }, []);
+    initTensorflow();
+  }, []);
 
   // Handles changes to user preferences
   // Called by: context consumers via handlePreferenceChange
@@ -119,7 +117,9 @@ export default function RasaAiContextProvider({ children }) {
     try {
       setError(null);
       setShowCamera(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" },
+      });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -197,72 +197,73 @@ export default function RasaAiContextProvider({ children }) {
 
   // Determines the user's skin tone from an image file
   // Called by: analyzeSkinTone
-  const getActualSkinTone = (imageFile) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      img.onload = () => {
-        try {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-          const faceRegion = {
-            x: img.width / 2 - (img.width * 0.3) / 2,
-            y: img.height / 2 - (img.height * 0.3) / 2,
-            width: img.width * 0.3,
-            height: img.height * 0.3,
-          };
-          const skinPixels = [];
-          const imageData = ctx.getImageData(
-            faceRegion.x,
-            faceRegion.y,
-            faceRegion.width,
-            faceRegion.height
-          );
-          const data = imageData.data;
-          for (let i = 0; i < data.length; i += 20) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            if (r > 100 && g > 50 && b > 50 && r > g && r > b) {
-              skinPixels.push([r, g, b]);
-            }
-          }
-          if (skinPixels.length === 0) {
-            throw new Error("Could not detect skin in the image");
-          }
-          const avgColor = skinPixels.reduce(
-            (acc, [r, g, b]) => {
-              acc.r += r;
-              acc.g += g;
-              acc.b += b;
-              return acc;
-            },
-            { r: 0, g: 0, b: 0 }
-          );
-          avgColor.r = Math.round(avgColor.r / skinPixels.length);
-          avgColor.g = Math.round(avgColor.g / skinPixels.length);
-          avgColor.b = Math.round(avgColor.b / skinPixels.length);
-          const luminance =
-            (0.2126 * avgColor.r + 0.7152 * avgColor.g + 0.0722 * avgColor.b) / 255;
-          let skinTone;
-          if (luminance < 0.08) skinTone = 7;
-          else if (luminance < 0.15) skinTone = 6;
-          else if (luminance < 0.25) skinTone = 5;
-          else if (luminance < 0.35) skinTone = 4;
-          else if (luminance < 0.5) skinTone = 3;
-          else if (luminance < 0.7) skinTone = 2;
-          else skinTone = 1;
-          resolve(skinTone);
-        } catch (err) {
-          reject(err);
-        }
-      };
-      img.onerror = () => reject(new Error("Failed to load image"));
-      img.src = URL.createObjectURL(imageFile);
-    });
-  };
+  // const getActualSkinTone = (imageFile) => {
+  //   return new Promise((resolve, reject) => {
+  //     const img = new Image();
+  //     const canvas = document.createElement("canvas");
+  //     const ctx = canvas.getContext("2d");
+  //     img.onload = () => {
+  //       try {
+  //         canvas.width = img.width;
+  //         canvas.height = img.height;
+  //         ctx.drawImage(img, 0, 0);
+  //         const faceRegion = {
+  //           x: img.width / 2 - (img.width * 0.3) / 2,
+  //           y: img.height / 2 - (img.height * 0.3) / 2,
+  //           width: img.width * 0.3,
+  //           height: img.height * 0.3,
+  //         };
+  //         const skinPixels = [];
+  //         const imageData = ctx.getImageData(
+  //           faceRegion.x,
+  //           faceRegion.y,
+  //           faceRegion.width,
+  //           faceRegion.height
+  //         );
+  //         const data = imageData.data;
+  //         for (let i = 0; i < data.length; i += 20) {
+  //           const r = data[i];
+  //           const g = data[i + 1];
+  //           const b = data[i + 2];
+  //           if (r > 100 && g > 50 && b > 50 && r > g && r > b) {
+  //             skinPixels.push([r, g, b]);
+  //           }
+  //         }
+  //         if (skinPixels.length === 0) {
+  //           throw new Error("Could not detect skin in the image");
+  //         }
+  //         const avgColor = skinPixels.reduce(
+  //           (acc, [r, g, b]) => {
+  //             acc.r += r;
+  //             acc.g += g;
+  //             acc.b += b;
+  //             return acc;
+  //           },
+  //           { r: 0, g: 0, b: 0 }
+  //         );
+  //         avgColor.r = Math.round(avgColor.r / skinPixels.length);
+  //         avgColor.g = Math.round(avgColor.g / skinPixels.length);
+  //         avgColor.b = Math.round(avgColor.b / skinPixels.length);
+  //         const luminance =
+  //           (0.2126 * avgColor.r + 0.7152 * avgColor.g + 0.0722 * avgColor.b) /
+  //           255;
+  //         let skinTone;
+  //         if (luminance < 0.08) skinTone = 7;
+  //         else if (luminance < 0.15) skinTone = 6;
+  //         else if (luminance < 0.25) skinTone = 5;
+  //         else if (luminance < 0.35) skinTone = 4;
+  //         else if (luminance < 0.5) skinTone = 3;
+  //         else if (luminance < 0.7) skinTone = 2;
+  //         else skinTone = 1;
+  //         resolve(skinTone);
+  //       } catch (err) {
+  //         reject(err);
+  //       }
+  //     };
+  //     img.onerror = () => reject(new Error("Failed to load image"));
+  //     img.src = URL.createObjectURL(imageFile);
+  //   });
+  // };
 
   // Generates the prompt for the Gemini API using skin tone and preferences
   // Called by: analyzeSkinTone
@@ -350,7 +351,9 @@ export default function RasaAiContextProvider({ children }) {
         const parsedResponse = JSON.parse(jsonString);
         return {
           colorPalette: {
-            description: parsedResponse.colorPalette?.description || "Recommended colors for your skin tone",
+            description:
+              parsedResponse.colorPalette?.description ||
+              "Recommended colors for your skin tone",
             recommended: parsedResponse.colorPalette?.recommended || [],
             avoid: parsedResponse.colorPalette?.avoid || [],
             neutrals: parsedResponse.colorPalette?.neutrals || [],
@@ -400,14 +403,17 @@ export default function RasaAiContextProvider({ children }) {
     try {
       const token = localStorage.getItem("token");
       const BACKEND_URL = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${BACKEND_URL}/api/profile/analysis-report`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ report }),
-      });
+      const response = await fetch(
+        `${BACKEND_URL}/api/profile/analysis-report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ report }),
+        }
+      );
       const resData = await response.json();
       if (!response.ok) {
         throw new Error(resData.message || "Failed to save analysis report");
@@ -448,17 +454,24 @@ export default function RasaAiContextProvider({ children }) {
     try {
       const fashionQuery = `${outfitName} fashion outfit clothing apparel`;
       const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(fashionQuery)}&per_page=1`,
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+          fashionQuery
+        )}&per_page=1`,
         {
           headers: { Authorization: apiKey },
         }
       );
       if (!response.ok) {
-        throw new Error(`Pexels API request failed with status ${response.status}`);
+        throw new Error(
+          `Pexels API request failed with status ${response.status}`
+        );
       }
       const data = await response.json();
       if (data.photos && data.photos.length > 0) {
-        setOutfitImages((prev) => ({ ...prev, [outfitName]: data.photos[0].src.medium }));
+        setOutfitImages((prev) => ({
+          ...prev,
+          [outfitName]: data.photos[0].src.medium,
+        }));
       }
     } catch (err) {
       setError("Failed to fetch outfit image");
@@ -477,17 +490,24 @@ export default function RasaAiContextProvider({ children }) {
     try {
       const accessoryQuery = `${accessoryName} fashion accessory`;
       const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(accessoryQuery)}&per_page=1`,
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+          accessoryQuery
+        )}&per_page=1`,
         {
           headers: { Authorization: apiKey },
         }
       );
       if (!response.ok) {
-        throw new Error(`Pexels API request failed with status ${response.status}`);
+        throw new Error(
+          `Pexels API request failed with status ${response.status}`
+        );
       }
       const data = await response.json();
       if (data.photos && data.photos.length > 0) {
-        setAccessoryImages((prev) => ({ ...prev, [accessoryName]: data.photos[0].src.medium }));
+        setAccessoryImages((prev) => ({
+          ...prev,
+          [accessoryName]: data.photos[0].src.medium,
+        }));
       }
     } catch (err) {
       setError("Failed to fetch accessory image");
