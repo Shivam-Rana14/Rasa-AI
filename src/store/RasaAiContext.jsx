@@ -1,5 +1,6 @@
 import { createContext, useState, useRef } from "react";
 
+// Context for Rasa AI state and actions
 export const RasaAiCTX = createContext({
   image: null,
   previewUrl: null,
@@ -36,6 +37,7 @@ export const RasaAiCTX = createContext({
   setSelectedAccessoryImage: () => {},
 });
 
+// Provider for Rasa AI context
 export default function RasaAiContextProvider({ children }) {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -59,88 +61,8 @@ export default function RasaAiContextProvider({ children }) {
   const [accessoryImages, setAccessoryImages] = useState({});
   const [selectedAccessoryImage, setSelectedAccessoryImage] = useState(null);
 
-  const fetchOutfitImage = async (outfitName) => {
-    // Check if we already have this image cached
-    if (outfitImages[outfitName]) return;
-
-    const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
-    if (!apiKey) {
-      setError("Pexels API key not found");
-      return;
-    }
-
-    try {
-      const fashionQuery = `${outfitName} fashion outfit clothing apparel`;
-      const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(
-          fashionQuery
-        )}&per_page=1`,
-        {
-          headers: {
-            Authorization: apiKey,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Pexels API request failed with status ${response.status}`
-        );
-      }
-
-      const data = await response.json();
-      if (data.photos && data.photos.length > 0) {
-        setOutfitImages((prev) => ({
-          ...prev,
-          [outfitName]: data.photos[0].src.medium,
-        }));
-      }
-    } catch (err) {
-      setError("Failed to fetch outfit image");
-    }
-  };
-
-  const fetchAccessoryImage = async (accessoryName) => {
-    // Check if we already have this image cached
-    if (accessoryImages[accessoryName]) return;
-
-    const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
-    if (!apiKey) {
-      setError("Pexels API key not found");
-      return;
-    }
-
-    try {
-      const accessoryQuery = `${accessoryName} fashion accessory`;
-      const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(
-          accessoryQuery
-        )}&per_page=1`,
-        {
-          headers: {
-            Authorization: apiKey,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Pexels API request failed with status ${response.status}`
-        );
-      }
-
-      const data = await response.json();
-      if (data.photos && data.photos.length > 0) {
-        setAccessoryImages((prev) => ({
-          ...prev,
-          [accessoryName]: data.photos[0].src.medium,
-        }));
-      }
-    } catch (err) {
-      setError("Failed to fetch accessory image");
-    }
-  };
-
+  // Handles changes to user preferences
+  // Called by: context consumers via handlePreferenceChange
   const handlePreferenceChange = (key, value) => {
     if (key.includes("measurements.")) {
       const measurementKey = key.split(".")[1];
@@ -159,6 +81,8 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
+  // Handles file upload for image selection
+  // Called by: context consumers via handleFileUpload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -169,15 +93,13 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
+  // Starts the user's camera and displays video preview
+  // Called by: context consumers via startCamera
   const startCamera = async () => {
     try {
       setError(null);
       setShowCamera(true);
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
-      });
-
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -187,6 +109,8 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
+  // Stops the user's camera
+  // Called by: context consumers via stopCamera and capturePhoto
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -195,20 +119,19 @@ export default function RasaAiContextProvider({ children }) {
     setShowCamera(false);
   };
 
+  // Captures a photo from the video stream
+  // Called by: context consumers via capturePhoto
   const capturePhoto = () => {
     try {
       const video = videoRef.current;
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0);
-
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-
         setImage(file);
         setPreviewUrl(url);
         stopCamera();
@@ -219,6 +142,8 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
+  // Initiates the skin tone analysis process
+  // Called by: context consumers via analyzeSkinTone
   const analyzeSkinTone = async () => {
     if (
       !image ||
@@ -231,20 +156,12 @@ export default function RasaAiContextProvider({ children }) {
       setError("Please fill in all preferences before analyzing");
       return;
     }
-
     setIsAnalyzing(true);
     setError(null);
-
     try {
-      // Simulate skin tone analysis (1-4)
       const skinTone = await getActualSkinTone(image);
-
-      // Generate prompt for Gemini API
       const prompt = generateGeminiPrompt(skinTone, preferences);
-
-      // Call Gemini API
       const recommendations = await getGeminiRecommendations(prompt);
-
       setAnalysisResultAndSave({
         skinTone,
         preferences: { ...preferences },
@@ -258,29 +175,24 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
-  // New helper function for actual skin tone analysis
+  // Determines the user's skin tone from an image file
+  // Called by: analyzeSkinTone
   const getActualSkinTone = (imageFile) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-
       img.onload = () => {
         try {
-          // Set canvas dimensions
           canvas.width = img.width;
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0);
-
-          // Get face region (simplified - assumes face is in center)
           const faceRegion = {
             x: img.width / 2 - (img.width * 0.3) / 2,
             y: img.height / 2 - (img.height * 0.3) / 2,
             width: img.width * 0.3,
             height: img.height * 0.3,
           };
-
-          // Sample skin pixels from face region
           const skinPixels = [];
           const imageData = ctx.getImageData(
             faceRegion.x,
@@ -289,24 +201,17 @@ export default function RasaAiContextProvider({ children }) {
             faceRegion.height
           );
           const data = imageData.data;
-
-          // Sample every 5th pixel for performance
           for (let i = 0; i < data.length; i += 20) {
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
-
-            // Basic skin color detection (adjust thresholds as needed)
             if (r > 100 && g > 50 && b > 50 && r > g && r > b) {
               skinPixels.push([r, g, b]);
             }
           }
-
           if (skinPixels.length === 0) {
             throw new Error("Could not detect skin in the image");
           }
-
-          // Calculate average skin color
           const avgColor = skinPixels.reduce(
             (acc, [r, g, b]) => {
               acc.r += r;
@@ -316,36 +221,31 @@ export default function RasaAiContextProvider({ children }) {
             },
             { r: 0, g: 0, b: 0 }
           );
-
           avgColor.r = Math.round(avgColor.r / skinPixels.length);
           avgColor.g = Math.round(avgColor.g / skinPixels.length);
           avgColor.b = Math.round(avgColor.b / skinPixels.length);
-
-          // Classify on Fitzpatrick scale (1-7)
           const luminance =
-            (0.2126 * avgColor.r + 0.7152 * avgColor.g + 0.0722 * avgColor.b) /
-            255;
-
+            (0.2126 * avgColor.r + 0.7152 * avgColor.g + 0.0722 * avgColor.b) / 255;
           let skinTone;
-          if (luminance < 0.08) skinTone = 7; // Very dark
-          else if (luminance < 0.15) skinTone = 6; // Dark brown
-          else if (luminance < 0.25) skinTone = 5; // Brown
-          else if (luminance < 0.35) skinTone = 4; // Olive
-          else if (luminance < 0.5) skinTone = 3; // Medium
-          else if (luminance < 0.7) skinTone = 2; // Fair
-          else skinTone = 1; // Very fair
-
+          if (luminance < 0.08) skinTone = 7;
+          else if (luminance < 0.15) skinTone = 6;
+          else if (luminance < 0.25) skinTone = 5;
+          else if (luminance < 0.35) skinTone = 4;
+          else if (luminance < 0.5) skinTone = 3;
+          else if (luminance < 0.7) skinTone = 2;
+          else skinTone = 1;
           resolve(skinTone);
         } catch (err) {
           reject(err);
         }
       };
-
       img.onerror = () => reject(new Error("Failed to load image"));
       img.src = URL.createObjectURL(imageFile);
     });
   };
 
+  // Generates the prompt for the Gemini API using skin tone and preferences
+  // Called by: analyzeSkinTone
   const generateGeminiPrompt = (skinTone, preferences) => {
     return `Act as a professional fashion stylist and provide concise fashion recommendations in this exact JSON format:
     {
@@ -393,20 +293,19 @@ export default function RasaAiContextProvider({ children }) {
     - Season: ${preferences.season}`;
   };
 
+  // Calls Gemini API and parses recommendations
+  // Called by: analyzeSkinTone
   const getGeminiRecommendations = async (prompt) => {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error("API service unavailable");
     }
-
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [
               {
@@ -416,33 +315,22 @@ export default function RasaAiContextProvider({ children }) {
           }),
         }
       );
-
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
       }
-
       const data = await response.json();
-
-      // Extract the text content from the response
       const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
       if (!textContent) {
         throw new Error("No valid response from Gemini API");
       }
-
-      // Parse the JSON string response into an object
       try {
         const jsonStart = textContent.indexOf("{");
         const jsonEnd = textContent.lastIndexOf("}") + 1;
         const jsonString = textContent.slice(jsonStart, jsonEnd);
         const parsedResponse = JSON.parse(jsonString);
-
-        // Transform the response into the expected format
         return {
           colorPalette: {
-            description:
-              parsedResponse.colorPalette?.description ||
-              "Recommended colors for your skin tone",
+            description: parsedResponse.colorPalette?.description || "Recommended colors for your skin tone",
             recommended: parsedResponse.colorPalette?.recommended || [],
             avoid: parsedResponse.colorPalette?.avoid || [],
             neutrals: parsedResponse.colorPalette?.neutrals || [],
@@ -469,7 +357,25 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
-  // Save analysis report to backend
+  // Sets the analysis result and saves the report
+  // Called by: analyzeSkinTone
+  const setAnalysisResultAndSave = (result) => {
+    let safeResult = { ...result };
+    if (!safeResult.recommendations) safeResult.recommendations = {};
+    if (!safeResult.recommendations.colorPalette)
+      safeResult.recommendations.colorPalette = {};
+    const cp = safeResult.recommendations.colorPalette;
+    cp.recommended = Array.isArray(cp.recommended) ? cp.recommended : [];
+    cp.avoid = Array.isArray(cp.avoid) ? cp.avoid : [];
+    cp.neutrals = Array.isArray(cp.neutrals) ? cp.neutrals : [];
+    setAnalysisResult(safeResult);
+    if (safeResult) {
+      saveAnalysisReport({ ...safeResult, date: new Date().toISOString() });
+    }
+  };
+
+  // Saves the analysis report to the backend
+  // Called by: setAnalysisResultAndSave
   const saveAnalysisReport = async (report) => {
     try {
       const token = localStorage.getItem("token");
@@ -491,23 +397,8 @@ export default function RasaAiContextProvider({ children }) {
     }
   };
 
-  // Wrap setAnalysisResult to also save the report
-  const setAnalysisResultAndSave = (result) => {
-    // Defensive: ensure colorPalette is always present and arrays
-    let safeResult = { ...result };
-    if (!safeResult.recommendations) safeResult.recommendations = {};
-    if (!safeResult.recommendations.colorPalette)
-      safeResult.recommendations.colorPalette = {};
-    const cp = safeResult.recommendations.colorPalette;
-    cp.recommended = Array.isArray(cp.recommended) ? cp.recommended : [];
-    cp.avoid = Array.isArray(cp.avoid) ? cp.avoid : [];
-    cp.neutrals = Array.isArray(cp.neutrals) ? cp.neutrals : [];
-    setAnalysisResult(safeResult);
-    if (safeResult) {
-      saveAnalysisReport({ ...safeResult, date: new Date().toISOString() });
-    }
-  };
-
+  // Resets all user and analysis state
+  // Called by: context consumers via resetAll
   const resetAll = () => {
     stopCamera();
     setImage(null);
@@ -523,6 +414,64 @@ export default function RasaAiContextProvider({ children }) {
       season: "",
       measurements: {},
     });
+  };
+
+  // Fetches an outfit image from Pexels API if not cached
+  // Called by: context consumers via fetchOutfitImage
+  const fetchOutfitImage = async (outfitName) => {
+    if (outfitImages[outfitName]) return;
+    const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
+    if (!apiKey) {
+      setError("Pexels API key not found");
+      return;
+    }
+    try {
+      const fashionQuery = `${outfitName} fashion outfit clothing apparel`;
+      const response = await fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(fashionQuery)}&per_page=1`,
+        {
+          headers: { Authorization: apiKey },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Pexels API request failed with status ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.photos && data.photos.length > 0) {
+        setOutfitImages((prev) => ({ ...prev, [outfitName]: data.photos[0].src.medium }));
+      }
+    } catch (err) {
+      setError("Failed to fetch outfit image");
+    }
+  };
+
+  // Fetches an accessory image from Pexels API if not cached
+  // Called by: context consumers via fetchAccessoryImage
+  const fetchAccessoryImage = async (accessoryName) => {
+    if (accessoryImages[accessoryName]) return;
+    const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
+    if (!apiKey) {
+      setError("Pexels API key not found");
+      return;
+    }
+    try {
+      const accessoryQuery = `${accessoryName} fashion accessory`;
+      const response = await fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(accessoryQuery)}&per_page=1`,
+        {
+          headers: { Authorization: apiKey },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Pexels API request failed with status ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.photos && data.photos.length > 0) {
+        setAccessoryImages((prev) => ({ ...prev, [accessoryName]: data.photos[0].src.medium }));
+      }
+    } catch (err) {
+      setError("Failed to fetch accessory image");
+    }
   };
 
   const contextValue = {
