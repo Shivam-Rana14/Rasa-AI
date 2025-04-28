@@ -1,4 +1,6 @@
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
 import ButtonGradient from "./assets/svg/ButtonGradient";
 import Benefits from "./components/Benefits";
 import Collaboration from "./components/Collaboration";
@@ -16,6 +18,8 @@ import { Routes, Route } from "react-router-dom";
 import RasaAiContextProvider from "./store/RasaAiContext";
 // import DeveloperCredit from "./components/DeveloperCredit";
 import ErrorPage from "./components/ErrorPage";
+
+const queryClient = new QueryClient();
 
 const App = () => {
   return (
@@ -38,9 +42,11 @@ const App = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
+              <QueryClientProvider client={queryClient}>
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              </QueryClientProvider>
             }
           />
           <Route

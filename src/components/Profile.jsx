@@ -1,39 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchReports } from "../utils/http";
 import Section from "./Section";
 import LoadingSpinner from "./LoadingSpinner";
 import Notification from "./Notification";
 import ReportCard from "./ReportCard";
 
 const Profile = () => {
-  const [reports, setReports] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data,
+    error,
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ["reports"],
+    queryFn: fetchReports,
+  });
 
-  useEffect(() => {
-    const fetchReports = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const token = localStorage.getItem("token");
-        const BACKEND_URL = import.meta.env.VITE_API_URL;
-        const res = await fetch(`${BACKEND_URL}/api/auth/analysis-reports`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!res.ok) {
-          throw new Error("Failed to fetch analysis reports");
-        }
-        const data = await res.json();
-        setReports(data.analysisReports || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReports();
-  }, []);
+  const reports = data?.analysisReports || []
 
   return (
     <Section className="relative min-h-[calc(100vh-80px)] flex items-center py-12">
@@ -56,7 +38,7 @@ const Profile = () => {
                   No analysis reports found.
                 </div>
               )}
-              {!loading && !error && reports.length > 0 && (
+              {!loading && reports.length > 0 && (
                 <div className="space-y-6">
                   {reports.map((report, idx) => (
                     <ReportCard
