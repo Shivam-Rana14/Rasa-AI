@@ -8,7 +8,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+// CORS setup
+const allowedOrigins = [
+  'http://localhost:5173', 
+
+  'https://rasa-ai.vercel.app'
+];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true, // if you use cookies/auth
+}));
 app.use(express.json());
 
 // Routes
