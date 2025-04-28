@@ -69,9 +69,37 @@ const authenticate = (req, res, next) => {
     }
   };
 
+  // Delete analysis report for the authenticated user by date
+  const deleteAnalysisReport = async (req, res) => {
+    let client;
+    try {
+      client = await MongoClient.connect(MONGODB_URI);
+      const collection = client.db(DB_NAME).collection('users');
+      const userEmail = req.user.email;
+      const reportDate = req.params.date;
+      if (!reportDate) {
+        client.close();
+        return res.status(400).json({ message: 'No report date provided' });
+      }
+      // Remove the report with the matching date
+      const result = await collection.updateOne(
+        { email: userEmail },
+        { $pull: { analysisReports: { date: reportDate } } }
+      );
+      client.close();
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({ message: 'Report or user not found' });
+      }
+      res.status(200).json({ message: 'Analysis report deleted' });
+    } catch (error) {
+      console.error('[deleteAnalysisReport] Error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
 
-  module.exports = {
-    authenticate, 
+module.exports = {
+  authenticate,
   addAnalysisReport,
   getAnalysisReports,
-  }
+  deleteAnalysisReport,
+};

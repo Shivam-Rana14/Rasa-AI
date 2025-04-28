@@ -58,7 +58,7 @@ const getColorPaletteFromReport = (report) => {
   return { recommended: [], avoid: [], neutrals: [] };
 };
 
-const ReportCard = ({ report, idx, total }) => {
+const ReportCard = ({ report, idx, total, onDelete, deleting }) => {
   const [collapsed, setCollapsed] = useState(true);
 
   if (!report || typeof report !== "object")
@@ -177,6 +177,13 @@ const ReportCard = ({ report, idx, total }) => {
               ))}
             </div>
           </Collapsible>
+          <button
+            onClick={onDelete}
+            disabled={deleting}
+            className="text-red-600 hover:underline mt-2"
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </button>
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchReports } from "../utils/http";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchReports, deleteReportByDate } from "../utils/http";
 import Section from "./Section";
 import LoadingSpinner from "./LoadingSpinner";
 import Notification from "./Notification";
@@ -13,6 +13,14 @@ const Profile = () => {
   } = useQuery({
     queryKey: ["reports"],
     queryFn: fetchReports,
+  });
+
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation({
+    mutationFn: deleteReportByDate,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["reports"]);
+    },
   });
 
   const reports = data?.analysisReports || []
@@ -46,6 +54,8 @@ const Profile = () => {
                       report={report}
                       idx={idx}
                       total={reports.length}
+                      onDelete={() => deleteMutation.mutate(report.date)}
+                      deleting={deleteMutation.isLoading && deleteMutation.variables === report.date}
                     />
                   ))}
                 </div>
